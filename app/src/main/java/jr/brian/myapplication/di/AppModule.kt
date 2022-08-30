@@ -8,7 +8,7 @@ import hu.akarnokd.rxjava3.retrofit.RxJava3CallAdapterFactory
 import jr.brian.myapplication.model.remote.ApiService
 import jr.brian.myapplication.model.remote.Constants.BASE_URL
 import jr.brian.myapplication.model.repository.Repository
-import jr.brian.myapplication.model.repository.RepositoryImplementation
+import jr.brian.myapplication.model.repository.RepoImpl
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
@@ -33,6 +33,6 @@ object AppModule {
     @Provides
     @Singleton
     fun provideRepository(apiService: ApiService) : Repository {
-        return RepositoryImplementation(apiService)
+        return RepoImpl(apiService)
     }
 }

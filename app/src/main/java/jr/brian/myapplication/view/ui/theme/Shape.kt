@@ -1,4 +1,4 @@
-package jr.brian.myapplication.util.theme
+package jr.brian.logincompose.ui.theme
 
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Shapes

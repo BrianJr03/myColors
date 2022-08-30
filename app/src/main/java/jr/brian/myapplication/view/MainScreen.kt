@@ -1,5 +1,6 @@
 package jr.brian.myapplication.view
 
+import android.content.Context
 import androidx.annotation.ColorInt
 import androidx.annotation.Size
 import androidx.compose.foundation.ExperimentalFoundationApi
@@ -16,35 +17,75 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavController
 import jr.brian.myapplication.model.remote.MyColorResponse
+import jr.brian.myapplication.model.util.UserDataStore
 import jr.brian.myapplication.viewmodel.MainViewModel
+import kotlinx.coroutines.launch
 
 @Composable
-fun MainScreen(viewModel: MainViewModel = hiltViewModel()) {
-    var searchText by remember { mutableStateOf("") }
+fun MainScreen(
+    context: Context,
+    navController: NavController,
+    viewModel: MainViewModel = hiltViewModel()
+) {
+    var numOfColors by remember { mutableStateOf("") }
+    var color by remember { mutableStateOf("") }
     val flowResponse by viewModel.flowResponse.collectAsState()
+
+    val scope = rememberCoroutineScope()
+    val dataStore = UserDataStore(context)
 
     Column(
         modifier = Modifier
             .fillMaxSize()
             .padding(10.dp)
     ) {
-        TextField(
-            value = searchText,
-            onValueChange = { searchText = it },
-            modifier = Modifier.fillMaxWidth()
-        )
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceEvenly,
+        ) {
+            TextField(
+                value = color,
+                modifier = Modifier
+                    .padding(5.dp)
+                    .fillMaxWidth(.5f),
+                onValueChange = { color = it },
+                label = { Text("Color") }
+            )
+            TextField(
+                value = numOfColors,
+                modifier = Modifier.padding(5.dp),
+                onValueChange = { numOfColors = it },
+                label = { Text("Number") }
+            )
+        }
 
         Row(Modifier.fillMaxWidth()) {
             Column(
                 modifier = Modifier
-                    .fillMaxWidth(.5f)
+                    .fillMaxWidth()
                     .padding(5.dp)
             ) {
-                Button(onClick = {
-                        searchText.toIntOrNull()?.let { viewModel.getColors(it) }
+                Button(modifier = Modifier
+                    .fillMaxWidth(), onClick = {
+                    numOfColors.toIntOrNull()?.let {
+                        if (color.isNotEmpty()) {
+                            viewModel.getColors(color.lowercase(), it)
+                        }
+                    }
                 }) {
-                    Text(text = "Search")
+                    Text(text = "Search", color = Color.White)
+                }
+                Button(modifier = Modifier
+                    .fillMaxWidth(), onClick = {
+                    scope.launch { dataStore.clear() }
+                    navController.navigate("login_page") {
+                        popUpTo(navController.graph.startDestinationId)
+                        launchSingleTop = true
+                    }
+                }) {
+                    Text(text = "Logout", color = Color.White)
                 }
                 flowResponse?.let {
                     ColorsList(it)
@@ -61,15 +102,18 @@ fun ColorsList(
 ) {
     LazyVerticalGrid(
         modifier = Modifier.fillMaxSize(),
-        cells = GridCells.Fixed(3)
+        cells = GridCells.Adaptive(100.dp)
     ) {
         items(colors) { color ->
-            Row(
-                Modifier
-                    .fillMaxWidth()
+            Box(
+                modifier = Modifier
+                    .padding(8.dp)
+                    .width(150.dp)
                     .height(150.dp)
-                    .background(Color(parseColor(color.hex)))
-            ) {}
+                    .background(Color(parseColor(color.hex))),
+            ) {
+                Text(color.hex, color = Color.Black)
+            }
         }
     }
 }
