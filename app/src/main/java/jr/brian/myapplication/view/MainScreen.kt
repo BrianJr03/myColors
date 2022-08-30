@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.GridCells
 import androidx.compose.foundation.lazy.LazyVerticalGrid
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.Button
 import androidx.compose.material.Text
 import androidx.compose.material.TextField
@@ -16,6 +17,7 @@ import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
@@ -54,13 +56,14 @@ fun MainScreen(
                     .padding(5.dp)
                     .fillMaxWidth(.5f),
                 onValueChange = { colorInput = it },
-                label = { Text("Color") }
+                label = { Text("Color or Hue #") },
             )
             TextField(
                 value = numOfColorsInput,
                 modifier = Modifier.padding(5.dp),
                 onValueChange = { numOfColorsInput = it },
-                label = { Text("Number") }
+                label = { Text("Count") },
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
             )
         }
 
@@ -82,8 +85,8 @@ fun MainScreen(
                             numOfColorsInput = num.toString()
                         }
                         if (colorInput.isNotEmpty()) {
-//                            viewModel.getColorsRx(colorInput.lowercase(), num)
-                            viewModel.getColors(colorInput.lowercase(), num)
+//                            viewModel.getColorsRx(colorInput.lowercase().trim(), num)
+                            viewModel.getColors(colorInput.lowercase().trim(), num)
                         }
                     }
                 }) {
