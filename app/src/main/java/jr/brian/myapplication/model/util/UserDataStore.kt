@@ -39,15 +39,15 @@ class UserDataStore(private val context: Context) {
         savePassword(password)
     }
 
-    private suspend fun saveEmail(name: String) {
+    private suspend fun saveEmail(email: String) {
         context.dataStore.edit { preferences ->
-            preferences[USER_EMAIL_KEY] = name
+            preferences[USER_EMAIL_KEY] = email
         }
     }
 
-    private suspend fun savePassword(name: String) {
+    private suspend fun savePassword(password: String) {
         context.dataStore.edit { preferences ->
-            preferences[USER_EMAIL_KEY] = name
+            preferences[USER_PASSWORD_KEY] = password
         }
     }
 }

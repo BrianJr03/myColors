@@ -29,8 +29,8 @@ fun MainScreen(
     navController: NavController,
     viewModel: MainViewModel = hiltViewModel()
 ) {
-    var numOfColors by remember { mutableStateOf("") }
-    var color by remember { mutableStateOf("") }
+    var numOfColorsInput by remember { mutableStateOf("") }
+    var colorInput by remember { mutableStateOf("") }
     val flowResponse by viewModel.flowResponse.collectAsState()
 
     val scope = rememberCoroutineScope()
@@ -46,17 +46,17 @@ fun MainScreen(
             horizontalArrangement = Arrangement.SpaceEvenly,
         ) {
             TextField(
-                value = color,
+                value = colorInput,
                 modifier = Modifier
                     .padding(5.dp)
                     .fillMaxWidth(.5f),
-                onValueChange = { color = it },
+                onValueChange = { colorInput = it },
                 label = { Text("Color") }
             )
             TextField(
-                value = numOfColors,
+                value = numOfColorsInput,
                 modifier = Modifier.padding(5.dp),
-                onValueChange = { numOfColors = it },
+                onValueChange = { numOfColorsInput = it },
                 label = { Text("Number") }
             )
         }
@@ -69,13 +69,22 @@ fun MainScreen(
             ) {
                 Button(modifier = Modifier
                     .fillMaxWidth(), onClick = {
-                    numOfColors.toIntOrNull()?.let {
-                        if (color.isNotEmpty()) {
-                            viewModel.getColors(color.lowercase(), it)
+                    numOfColorsInput.toIntOrNull()?.let {
+                        var num = it
+                        if (num < 2) {
+                            num = 2
+                            numOfColorsInput = num.toString()
+                        }
+                        if (num > 51) {
+                            num = 51
+                            numOfColorsInput = num.toString()
+                        }
+                        if (colorInput.isNotEmpty()) {
+                            viewModel.getColors(colorInput.lowercase(), num)
                         }
                     }
                 }) {
-                    Text(text = "Search", color = Color.White)
+                    Text(text = "View Colors", color = Color.White)
                 }
                 Button(modifier = Modifier
                     .fillMaxWidth(), onClick = {
