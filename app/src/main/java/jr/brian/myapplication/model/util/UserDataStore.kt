@@ -15,7 +15,7 @@ class UserDataStore(private val context: Context) {
         private val Context.dataStore:
                 DataStore<Preferences> by preferencesDataStore("user-info")
         val USER_EMAIL_KEY = stringPreferencesKey("user_email")
-        val USER_PASSWORD_KEY = stringPreferencesKey("user_email")
+        val USER_PASSWORD_KEY = stringPreferencesKey("user_password")
     }
 
     val getEmail: Flow<String?> = context.dataStore.data
