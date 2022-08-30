@@ -13,6 +13,7 @@ import androidx.compose.material.Button
 import androidx.compose.material.Text
 import androidx.compose.material.TextField
 import androidx.compose.runtime.*
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
@@ -32,6 +33,8 @@ fun MainScreen(
     var numOfColorsInput by remember { mutableStateOf("") }
     var colorInput by remember { mutableStateOf("") }
     val flowResponse by viewModel.flowResponse.collectAsState()
+
+    val liveData by viewModel.colorsLiveData.observeAsState()
 
     val scope = rememberCoroutineScope()
     val dataStore = UserDataStore(context)
@@ -74,12 +77,12 @@ fun MainScreen(
                         if (num < 2) {
                             num = 2
                             numOfColorsInput = num.toString()
-                        }
-                        if (num > 51) {
+                        } else if (num > 51) {
                             num = 51
                             numOfColorsInput = num.toString()
                         }
                         if (colorInput.isNotEmpty()) {
+//                            viewModel.getColorsRx(colorInput.lowercase(), num)
                             viewModel.getColors(colorInput.lowercase(), num)
                         }
                     }
@@ -95,6 +98,9 @@ fun MainScreen(
                     }
                 }) {
                     Text(text = "Logout", color = Color.White)
+                }
+                liveData?.let {
+                    ColorsList(it)
                 }
                 flowResponse?.let {
                     ColorsList(it)
