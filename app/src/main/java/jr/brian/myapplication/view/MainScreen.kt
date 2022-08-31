@@ -79,28 +79,43 @@ fun MainScreen(
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Button(
-                    modifier = Modifier
-                        .fillMaxWidth(), onClick = {
-                        numOfColorsInput.toIntOrNull()?.let {
-                            var num = it
-                            if (num < 2) {
-                                num = 2
-                                numOfColorsInput = num.toString()
-                            } else if (num > 51) {
-                                num = 51
-                                numOfColorsInput = num.toString()
-                            }
-                            if (colorInput.isNotEmpty()) {
-//                            viewModel.getColorsRx(colorInput.lowercase().trim(), num)
-                                viewModel.getColors(colorInput.lowercase().trim(), num)
-                            }
-                        }
-                    }, colors = ButtonDefaults.buttonColors(
-                        backgroundColor = BlueishIDK
-                    )
+
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceEvenly,
                 ) {
-                    Text(text = "Search Colors", color = Color.White)
+                    Button(
+                        modifier = Modifier
+                            .fillMaxWidth(.5f), onClick = {
+                            numOfColorsInput.toIntOrNull()?.let {
+                                var num = it
+                                if (num < 2) {
+                                    num = 2
+                                    numOfColorsInput = num.toString()
+                                } else if (num > 51) {
+                                    num = 51
+                                    numOfColorsInput = num.toString()
+                                }
+                                if (colorInput.isNotEmpty()) {
+//                            viewModel.getColorsRx(colorInput.lowercase().trim(), num)
+                                    viewModel.getColors(colorInput.lowercase().trim(), num)
+                                }
+                            }
+                        }, colors = ButtonDefaults.buttonColors(
+                            backgroundColor = BlueishIDK
+                        )
+                    ) {
+                        Text(text = "Search", color = Color.White)
+                    }
+
+                    Button(
+                        onClick = { viewModel.getColors("random", 51) },
+                        colors = ButtonDefaults.buttonColors(
+                            backgroundColor = BlueishIDK
+                        )
+                    ) {
+                        Text(text = "Random", color = Color.White)
+                    }
                 }
 
                 Button(
