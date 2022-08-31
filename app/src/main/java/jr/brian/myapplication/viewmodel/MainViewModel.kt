@@ -17,12 +17,16 @@ import javax.inject.Inject
 @HiltViewModel
 class MainViewModel @Inject constructor(private val repository: Repository) : ViewModel() {
     val flowResponse = MutableStateFlow<MyColorResponse?>(null)
+    val progress = MutableStateFlow(false)
 
     val colorsLiveData = MutableLiveData<MyColorResponse>()
     var compositeDisposable: CompositeDisposable = CompositeDisposable()
 
     fun getColors(color: String, numOfColors: Int) = viewModelScope.launch {
-        flowResponse.emit(repository.getColors(color, numOfColors))
+        progress.emit(true)
+        flowResponse.emit(repository.getColors(color, numOfColors)).also {
+            progress.emit(false)
+        }
     }
 
     fun getColorsRx(color: String, numOfColors: Int) {

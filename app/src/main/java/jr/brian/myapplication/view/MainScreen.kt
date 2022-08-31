@@ -1,11 +1,12 @@
 package jr.brian.myapplication.view
 
 import android.content.Context
-import androidx.activity.compose.BackHandler
+import android.widget.Toast
 import androidx.annotation.ColorInt
 import androidx.annotation.Size
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.GridCells
 import androidx.compose.foundation.lazy.LazyVerticalGrid
@@ -13,6 +14,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.KeyboardType
@@ -20,33 +22,28 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import jr.brian.myapplication.model.local.AppDatabase
 import jr.brian.myapplication.model.remote.MyColorResponse
-import jr.brian.myapplication.model.util.UserDataStore
 import jr.brian.myapplication.model.util.theme.BlueishIDK
 import jr.brian.myapplication.viewmodel.MainViewModel
-import kotlinx.coroutines.launch
 
 @Composable
 fun MainScreen(
     context: Context,
     navController: NavController,
+    appDB: AppDatabase,
     viewModel: MainViewModel = hiltViewModel()
 ) {
     var numOfColorsInput by remember { mutableStateOf("") }
     var colorInput by remember { mutableStateOf("") }
     val flowResponse by viewModel.flowResponse.collectAsState()
+    val progress by viewModel.progress.collectAsState()
 
 //    val liveData by viewModel.colorsLiveData.observeAsState()
 
     val shouldShowAvailColors = remember { mutableStateOf(false) }
-    val shouldShowLogout = remember { mutableStateOf(false) }
-
-    BackHandler {
-        shouldShowLogout.value = true
-    }
 
     EnableColorsDialog(bool = shouldShowAvailColors)
-    EnableLogoutDialog(context = context, bool = shouldShowLogout, navController = navController)
 
     Column(
         modifier = Modifier
@@ -78,7 +75,9 @@ fun MainScreen(
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(5.dp)
+                    .padding(5.dp),
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Button(
                     modifier = Modifier
@@ -103,6 +102,7 @@ fun MainScreen(
                 ) {
                     Text(text = "Search Colors", color = Color.White)
                 }
+
                 Button(
                     modifier = Modifier
                         .fillMaxWidth(), onClick = {
@@ -113,8 +113,27 @@ fun MainScreen(
                 ) {
                     Text(text = "Available Colors", color = Color.White)
                 }
+
+                Button(
+                    modifier = Modifier
+                        .fillMaxWidth(), onClick = {
+                        navController.navigate("fav_color_page") {
+                            popUpTo(navController.graph.startDestinationId)
+                            launchSingleTop = true
+                        }
+                    }, colors = ButtonDefaults.buttonColors(
+                        backgroundColor = BlueishIDK
+                    )
+                ) {
+                    Text(text = "View Favorites", color = Color.White)
+                }
+
+                if (progress) {
+                    Spacer(modifier = Modifier.height(50.dp))
+                    CircularProgressIndicator()
+                }
 //                liveData?.let { ColorsList(it) }
-                flowResponse?.let { ColorsList(it) }
+                flowResponse?.let { ColorsList(context, appDB, it) }
             }
         }
     }
@@ -123,6 +142,8 @@ fun MainScreen(
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun ColorsList(
+    context: Context,
+    appDB: AppDatabase,
     colors: MyColorResponse
 ) {
     LazyVerticalGrid(
@@ -132,6 +153,15 @@ fun ColorsList(
         items(colors) { color ->
             Box(
                 modifier = Modifier
+                    .combinedClickable(
+                        onLongClick = {
+                            Toast
+                                .makeText(context, "Saved", Toast.LENGTH_LONG)
+                                .show()
+                            appDB
+                                .dao()
+                                .insertFavColor(color)
+                        }) {}
                     .padding(8.dp)
                     .width(150.dp)
                     .height(150.dp)
@@ -155,34 +185,6 @@ fun ShowDialog(
             confirmButton = confirmButton
         )
     }
-}
-
-@Composable
-fun EnableLogoutDialog(context: Context, bool: MutableState<Boolean>, navController: NavController) {
-    val scope = rememberCoroutineScope()
-    val dataStore = UserDataStore(context)
-    ShowDialog(
-        title = "Logout",
-        text = "This will log you out.",
-        confirmButton = {
-            Button(
-                onClick = {
-                    bool.value = false
-                    scope.launch { dataStore.clear() }
-                    navController.navigate("login_page") {
-                        popUpTo(navController.graph.startDestinationId)
-                        launchSingleTop = true
-                    }
-                },
-                colors = ButtonDefaults.buttonColors(
-                    backgroundColor = BlueishIDK
-                )
-            ) {
-                Text(text = "Logout", color = Color.White)
-            }
-
-        }, bool = bool
-    )
 }
 
 @Composable

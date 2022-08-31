@@ -64,26 +64,28 @@ dependencies {
     // Jetpack data store
     implementation "androidx.datastore:datastore-preferences:1.0.0"
 
-    //compose livedata
+    // Compose livedata
     implementation 'androidx.compose.runtime:runtime-livedata:1.3.0-alpha02'
 
-    //Dagger - Hilt
+    // Dagger - Hilt
     implementation "com.google.dagger:hilt-android:2.38.1"
     kapt "com.google.dagger:hilt-android-compiler:2.37"
     implementation "androidx.hilt:hilt-lifecycle-viewmodel:1.0.0-alpha03"
     kapt "androidx.hilt:hilt-compiler:1.0.0"
     implementation 'androidx.hilt:hilt-navigation-compose:1.0.0'
 
-    //landscape - glide for compose
-    implementation "com.github.skydoves:landscapist-glide:1.5.0"
-
     // Retrofit & OkHttp
     implementation 'com.squareup.retrofit2:retrofit:2.9.0'
     implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
     implementation 'com.squareup.okhttp3:logging-interceptor:5.0.0-alpha.2'
 
-    //Rx-Java
+    // Rx-Java
     implementation 'io.reactivex.rxjava3:rxjava:3.0.0'
     implementation 'io.reactivex.rxjava3:rxandroid:3.0.0'
     implementation "com.github.akarnokd:rxjava3-retrofit-adapter:3.0.0"
+
+    // Room DB
+    def roomVersion = "2.4.3"
+    implementation("androidx.room:room-runtime:$roomVersion")
+    kapt ("androidx.room:room-compiler:$roomVersion")
 }
