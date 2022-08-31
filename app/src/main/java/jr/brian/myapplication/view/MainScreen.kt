@@ -128,7 +128,15 @@ fun MainScreen(
                         onClick = {
                             colorInput = ""
                             if (numOfColorsInput.toIntOrNull() != null) {
-                                viewModel.getColors("random", numOfColorsInput.toInt())
+                                var num = numOfColorsInput.toInt()
+                                if (num < 2) {
+                                    num = 2
+                                    numOfColorsInput = num.toString()
+                                } else if (num > 51) {
+                                    num = 51
+                                    numOfColorsInput = num.toString()
+                                }
+                                viewModel.getColors("random", num)
                             } else {
                                 Toast
                                     .makeText(
