@@ -87,8 +87,8 @@ fun MainScreen(
                     Button(
                         modifier = Modifier
                             .fillMaxWidth(.5f), onClick = {
-                            numOfColorsInput.toIntOrNull()?.let {
-                                var num = it
+                            if (numOfColorsInput.toIntOrNull() != null) {
+                                var num = numOfColorsInput.toInt()
                                 if (num < 2) {
                                     num = 2
                                     numOfColorsInput = num.toString()
@@ -99,7 +99,23 @@ fun MainScreen(
                                 if (colorInput.isNotEmpty()) {
 //                            viewModel.getColorsRx(colorInput.lowercase().trim(), num)
                                     viewModel.getColors(colorInput.lowercase().trim(), num)
+                                } else {
+                                    Toast
+                                        .makeText(
+                                            context,
+                                            "Please Specify a Color",
+                                            Toast.LENGTH_LONG
+                                        )
+                                        .show()
                                 }
+                            } else {
+                                Toast
+                                    .makeText(
+                                        context,
+                                        "Please Specify a Count",
+                                        Toast.LENGTH_LONG
+                                    )
+                                    .show()
                             }
                         }, colors = ButtonDefaults.buttonColors(
                             backgroundColor = BlueishIDK
@@ -109,7 +125,20 @@ fun MainScreen(
                     }
 
                     Button(
-                        onClick = { viewModel.getColors("random", 51) },
+                        onClick = {
+                            colorInput = ""
+                            if (numOfColorsInput.toIntOrNull() != null) {
+                                viewModel.getColors("random", numOfColorsInput.toInt())
+                            } else {
+                                Toast
+                                    .makeText(
+                                        context,
+                                        "Please Specify a Count",
+                                        Toast.LENGTH_LONG
+                                    )
+                                    .show()
+                            }
+                        },
                         colors = ButtonDefaults.buttonColors(
                             backgroundColor = BlueishIDK
                         )
