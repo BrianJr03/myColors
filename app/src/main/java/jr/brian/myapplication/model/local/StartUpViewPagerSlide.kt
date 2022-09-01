@@ -15,6 +15,6 @@ fun pagerData() = listOf(
     StartUpViewPagerSlide(
         title = "Search Specific",
         subtitle = "or Generate Random",
-        description = "And Save your Favorites"
+        description = "Double-Click to Copy | Long-Press to Save"
     )
 )

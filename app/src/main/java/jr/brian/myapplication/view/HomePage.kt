@@ -16,7 +16,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.ClipboardManager
+import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -26,6 +29,7 @@ import jr.brian.myapplication.model.local.AppDatabase
 import jr.brian.myapplication.model.remote.MyColorResponse
 import jr.brian.myapplication.model.util.theme.BlueishIDK
 import jr.brian.myapplication.viewmodel.MainViewModel
+
 
 val availableColors =
     listOf(
@@ -202,6 +206,7 @@ fun ColorsList(
     appDB: AppDatabase,
     colors: MyColorResponse
 ) {
+    val clipboardManager = LocalClipboardManager.current
     LazyVerticalGrid(
         modifier = Modifier.fillMaxSize(),
         cells = GridCells.Adaptive(100.dp),
@@ -210,8 +215,12 @@ fun ColorsList(
             Box(
                 modifier = Modifier
                     .combinedClickable(
+                        onDoubleClick = {
+                            clipboardManager.setText(AnnotatedString(color.hex))
+                            makeToast(context, "Copied ${color.hex}")
+                        },
                         onLongClick = {
-                            makeToast(context, "Saved")
+                            makeToast(context, "Saved ${color.hex}")
                             appDB
                                 .dao()
                                 .insertFavColor(color)
