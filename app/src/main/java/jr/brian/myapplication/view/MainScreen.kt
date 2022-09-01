@@ -16,7 +16,10 @@ import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -39,6 +42,9 @@ fun MainScreen(
     val flowResponse by viewModel.flowResponse.collectAsState()
     val progress by viewModel.progress.collectAsState()
 
+    val focusRequester = remember { FocusRequester() }
+    val focusManager = LocalFocusManager.current
+
 //    val liveData by viewModel.colorsLiveData.observeAsState()
 
     val shouldShowAvailColors = remember { mutableStateOf(false) }
@@ -58,13 +64,16 @@ fun MainScreen(
                 value = colorInput,
                 modifier = Modifier
                     .padding(5.dp)
+                    .focusRequester(focusRequester)
                     .fillMaxWidth(.5f),
                 onValueChange = { colorInput = it },
                 label = { Text("Color or Hue #") },
             )
             TextField(
                 value = numOfColorsInput,
-                modifier = Modifier.padding(5.dp),
+                modifier = Modifier
+                    .padding(5.dp)
+                    .focusRequester(focusRequester),
                 onValueChange = { numOfColorsInput = it },
                 label = { Text("Count") },
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
@@ -87,6 +96,7 @@ fun MainScreen(
                     Button(
                         modifier = Modifier
                             .fillMaxWidth(.5f), onClick = {
+                            focusManager.clearFocus()
                             if (numOfColorsInput.toIntOrNull() != null) {
                                 var num = numOfColorsInput.toInt()
                                 if (num < 2) {
@@ -126,6 +136,7 @@ fun MainScreen(
 
                     Button(
                         onClick = {
+                            focusManager.clearFocus()
                             colorInput = ""
                             if (numOfColorsInput.toIntOrNull() != null) {
                                 var num = numOfColorsInput.toInt()
@@ -158,6 +169,7 @@ fun MainScreen(
                 Button(
                     modifier = Modifier
                         .fillMaxWidth(), onClick = {
+                        focusManager.clearFocus()
                         shouldShowAvailColors.value = true
                     }, colors = ButtonDefaults.buttonColors(
                         backgroundColor = BlueishIDK
@@ -169,6 +181,7 @@ fun MainScreen(
                 Button(
                     modifier = Modifier
                         .fillMaxWidth(), onClick = {
+                        focusManager.clearFocus()
                         navController.navigate("fav_color_page") {
                             popUpTo(navController.graph.startDestinationId)
                             launchSingleTop = true
