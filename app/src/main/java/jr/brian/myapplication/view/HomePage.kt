@@ -10,6 +10,8 @@ import androidx.compose.foundation.lazy.LazyVerticalGrid
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Info
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -108,8 +110,7 @@ fun HomePage(
                     horizontalArrangement = Arrangement.SpaceEvenly,
                 ) {
                     Button(
-                        modifier = Modifier
-                            .fillMaxWidth(.5f), onClick = {
+                        onClick = {
                             focusManager.clearFocus()
                             if (numOfColorsInput.toIntOrNull() != null) {
                                 var num = numOfColorsInput.toInt()
@@ -160,6 +161,23 @@ fun HomePage(
                         colors = ButtonDefaults.buttonColors(backgroundColor = BlueishIDK)
                     ) {
                         Text(text = "Random", color = Color.White)
+                    }
+
+                    Button(
+                        onClick = {
+                            focusManager.clearFocus()
+                            navController.navigate("start_up_page") {
+                                popUpTo(navController.graph.startDestinationId)
+                                launchSingleTop = true
+                            }
+                        },
+                        colors = ButtonDefaults.buttonColors(backgroundColor = BlueishIDK)
+                    ) {
+                        Icon(
+                            Icons.Default.Info,
+                            contentDescription = "info",
+                            tint = Color.White
+                        )
                     }
                 }
 
