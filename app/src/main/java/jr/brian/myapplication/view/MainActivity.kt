@@ -57,7 +57,7 @@ fun AppUI(context: Context, appDatabase: AppDatabase) {
             })
         composable(
             "fav_color_page",
-            content = { FavColorPage(appDB = appDatabase) })
+            content = { FavColorPage(appDB = appDatabase, context = context) })
         composable(
             "start_up_page",
             content = { StartUpViewPager(navController = navController, appDB = appDatabase) })

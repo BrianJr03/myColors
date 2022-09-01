@@ -1,5 +1,6 @@
 package jr.brian.myapplication.view
 
+import android.content.Context
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.combinedClickable
@@ -16,6 +17,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalClipboardManager
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import jr.brian.myapplication.model.local.AppDatabase
@@ -25,6 +28,7 @@ import jr.brian.myapplication.model.util.theme.BlueishIDK
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun FavColorPage(
+    context: Context,
     appDB: AppDatabase,
 ) {
     val colors = appDB.dao().getFavColors()
@@ -51,7 +55,7 @@ fun FavColorPage(
                     Text(text = "Remove All", color = Color.White)
                 }
                 Spacer(modifier = Modifier.height(15.dp))
-                FavColorsList(list = list)
+                FavColorsList(list = list, context = context)
             }
 
         } else {
@@ -66,7 +70,8 @@ fun FavColorPage(
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun FavColorsList(list: SnapshotStateList<MyColor>) {
+fun FavColorsList(context: Context, list: SnapshotStateList<MyColor>) {
+    val clipboardManager = LocalClipboardManager.current
     LazyVerticalGrid(
         modifier = Modifier.fillMaxSize(),
         cells = GridCells.Adaptive(100.dp),
@@ -76,6 +81,10 @@ fun FavColorsList(list: SnapshotStateList<MyColor>) {
             Box(
                 modifier = Modifier
                     .combinedClickable(
+                        onDoubleClick = {
+                            clipboardManager.setText(AnnotatedString(color.hex))
+                            makeToast(context, "Copied ${color.hex}")
+                        },
                         onLongClick = {
 //                                      TODO - Find duplication bug
 //                            list

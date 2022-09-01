@@ -16,7 +16,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.ClipboardManager
 import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.AnnotatedString
@@ -31,7 +30,7 @@ import jr.brian.myapplication.model.util.theme.BlueishIDK
 import jr.brian.myapplication.viewmodel.MainViewModel
 
 
-val availableColors =
+val additionalInfo =
     listOf(
         "Red",
         "Pink",
@@ -43,7 +42,8 @@ val availableColors =
         "Lime",
         "Yellow",
         "Orange",
-        "\nHue Color Range: 0 - 359"
+        "\nHue Color Range: 0 - 359\n",
+        "* Double-Click to Copy\n* Long-Press to Save"
     )
 
 @Composable
@@ -122,7 +122,7 @@ fun HomePage(
                                 }
                                 if (colorInput.isNotEmpty()) {
                                     if (
-                                        colorInput !in availableColors
+                                        colorInput !in additionalInfo
                                         && colorInput.toIntOrNull() !in 0..359
                                     ) {
                                         makeToast(context, "Displaying Random Colors")
@@ -172,7 +172,7 @@ fun HomePage(
                         backgroundColor = BlueishIDK
                     )
                 ) {
-                    Text(text = "Available Colors", color = Color.White)
+                    Text(text = "View Additional Info", color = Color.White)
                 }
 
                 Button(
@@ -257,7 +257,7 @@ fun ShowDialog(
 fun EnableColorsDialog(bool: MutableState<Boolean>) {
     ShowDialog(
         title = "Available Colors to Search",
-        text = availableColors.joinToString("\n"),
+        text = additionalInfo.joinToString("\n"),
         confirmButton = {
             Button(
                 onClick = { bool.value = false },
