@@ -2,8 +2,11 @@ package jr.brian.myapplication.view
 
 import android.content.Context
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.annotation.ColorInt
+import androidx.annotation.Size
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
@@ -41,9 +44,9 @@ fun AppUI(context: Context, appDatabase: AppDatabase) {
     val dest = "home_page"
     NavHost(navController = navController, startDestination = dest, builder = {
         composable(
-            "home_page",
+            dest,
             content = {
-                MainScreen(
+                HomePage(
                     navController = navController,
                     context = context,
                     appDB = appDatabase
@@ -52,10 +55,25 @@ fun AppUI(context: Context, appDatabase: AppDatabase) {
         composable(
             "fav_color_page",
             content = {
-                FavColorScreen(
-                    context = context,
+                FavColorPage(
                     appDB = appDatabase,
                 )
             })
     })
+}
+
+fun makeToast(context: Context, msg: String) =
+    Toast.makeText(context, msg, Toast.LENGTH_LONG).show()
+
+@ColorInt
+fun parseColor(@Size(min = 1) colorString: String): Int {
+    val error = "Unknown Color"
+    if (colorString[0] == '#') {
+        var color = colorString.substring(1).toLong(16)
+        if (colorString.length == 7) {
+            color = color or -0x1000000
+        } else require(colorString.length == 9) { error }
+        return color.toInt()
+    }
+    throw IllegalArgumentException(error)
 }

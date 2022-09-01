@@ -1,6 +1,5 @@
 package jr.brian.myapplication.view
 
-import android.content.Context
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.combinedClickable
@@ -24,13 +23,12 @@ import jr.brian.myapplication.model.util.theme.BlueishIDK
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun FavColorScreen(
-    context: Context,
+fun FavColorPage(
     appDB: AppDatabase,
 ) {
     val colors = appDB.dao().getFavColors()
     val list = remember { mutableStateListOf<MyColor>() }
-    colors.onEach { list.add(it) }
+    colors.forEach { list.add(it) }
     Column {
         Text(
             text = "Favorite Colors",
@@ -63,12 +61,8 @@ fun FavColorScreen(
                             modifier = Modifier
                                 .combinedClickable(
                                     onLongClick = {
-//                                    // TODO - Find duplication bug
+//                                      TODO - Find duplication bug
 //                                    list.remove(color)
-//                                    Toast
-//                                        .makeText(context, "Removed", Toast.LENGTH_LONG)
-//                                        .show()
-//                                    appDB
 //                                        .dao()
 //                                        .removeFavColor(color)
 

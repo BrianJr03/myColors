@@ -1,9 +1,6 @@
 package jr.brian.myapplication.view
 
 import android.content.Context
-import android.widget.Toast
-import androidx.annotation.ColorInt
-import androidx.annotation.Size
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.combinedClickable
@@ -30,8 +27,23 @@ import jr.brian.myapplication.model.remote.MyColorResponse
 import jr.brian.myapplication.model.util.theme.BlueishIDK
 import jr.brian.myapplication.viewmodel.MainViewModel
 
+val availableColors =
+    listOf(
+        "Red",
+        "Pink",
+        "Purple",
+        "Navy",
+        "Blue",
+        "Aqua",
+        "Green",
+        "Lime",
+        "Yellow",
+        "Orange",
+        "\nHue Color Range: 0 - 359"
+    )
+
 @Composable
-fun MainScreen(
+fun HomePage(
     context: Context,
     navController: NavController,
     appDB: AppDatabase,
@@ -40,12 +52,10 @@ fun MainScreen(
     var numOfColorsInput by remember { mutableStateOf("") }
     var colorInput by remember { mutableStateOf("") }
     val flowResponse by viewModel.flowResponse.collectAsState()
-    val progress by viewModel.progress.collectAsState()
+    val loading by viewModel.loading.collectAsState()
 
     val focusRequester = remember { FocusRequester() }
     val focusManager = LocalFocusManager.current
-
-//    val liveData by viewModel.colorsLiveData.observeAsState()
 
     val shouldShowAvailColors = remember { mutableStateOf(false) }
 
@@ -107,29 +117,17 @@ fun MainScreen(
                                     numOfColorsInput = num.toString()
                                 }
                                 if (colorInput.isNotEmpty()) {
-//                            viewModel.getColorsRx(colorInput.lowercase().trim(), num)
+                                    if (colorInput !in availableColors) {
+                                        makeToast(context, "Displaying Random Colors")
+                                    }
                                     viewModel.getColors(colorInput.lowercase().trim(), num)
                                 } else {
-                                    Toast
-                                        .makeText(
-                                            context,
-                                            "Please Specify a Color",
-                                            Toast.LENGTH_LONG
-                                        )
-                                        .show()
+                                    makeToast(context, "Please Specify a Color")
                                 }
                             } else {
-                                Toast
-                                    .makeText(
-                                        context,
-                                        "Please Specify a Count",
-                                        Toast.LENGTH_LONG
-                                    )
-                                    .show()
+                                makeToast(context, "Please Specify a Count")
                             }
-                        }, colors = ButtonDefaults.buttonColors(
-                            backgroundColor = BlueishIDK
-                        )
+                        }, colors = ButtonDefaults.buttonColors(backgroundColor = BlueishIDK)
                     ) {
                         Text(text = "Search", color = Color.White)
                     }
@@ -149,13 +147,7 @@ fun MainScreen(
                                 }
                                 viewModel.getColors("random", num)
                             } else {
-                                Toast
-                                    .makeText(
-                                        context,
-                                        "Please Specify a Count",
-                                        Toast.LENGTH_LONG
-                                    )
-                                    .show()
+                                makeToast(context, "Please Specify a Count")
                             }
                         },
                         colors = ButtonDefaults.buttonColors(
@@ -186,18 +178,16 @@ fun MainScreen(
                             popUpTo(navController.graph.startDestinationId)
                             launchSingleTop = true
                         }
-                    }, colors = ButtonDefaults.buttonColors(
-                        backgroundColor = BlueishIDK
-                    )
+                    }, colors = ButtonDefaults.buttonColors(backgroundColor = BlueishIDK)
                 ) {
                     Text(text = "View Favorites", color = Color.White)
                 }
 
-                if (progress) {
+                if (loading) {
                     Spacer(modifier = Modifier.height(50.dp))
                     CircularProgressIndicator()
                 }
-//                liveData?.let { ColorsList(it) }
+
                 flowResponse?.let { ColorsList(context, appDB, it) }
             }
         }
@@ -220,9 +210,7 @@ fun ColorsList(
                 modifier = Modifier
                     .combinedClickable(
                         onLongClick = {
-                            Toast
-                                .makeText(context, "Saved", Toast.LENGTH_LONG)
-                                .show()
+                            makeToast(context, "Saved")
                             appDB
                                 .dao()
                                 .insertFavColor(color)
@@ -240,13 +228,16 @@ fun ColorsList(
 
 @Composable
 fun ShowDialog(
-    title: String, text: String, confirmButton: @Composable () -> Unit, bool: MutableState<Boolean>
+    title: String,
+    text: String,
+    confirmButton: @Composable () -> Unit,
+    bool: MutableState<Boolean>
 ) {
     if (bool.value) {
         AlertDialog(
             onDismissRequest = { bool.value = false },
             title = { Text(title) },
-            text = { Text(text, color = Color.White, fontSize = 16.sp) },
+            text = { Text(text, fontSize = 16.sp) },
             confirmButton = confirmButton
         )
     }
@@ -254,46 +245,17 @@ fun ShowDialog(
 
 @Composable
 fun EnableColorsDialog(bool: MutableState<Boolean>) {
-    val colors =
-        listOf(
-            "Red",
-            "Pink",
-            "Purple",
-            "Navy",
-            "Blue",
-            "Aqua",
-            "Green",
-            "Lime",
-            "Yellow",
-            "Orange",
-            "\nHue Color Range: 0 - 359"
-        )
     ShowDialog(
         title = "Available Colors to Search",
-        text = colors.joinToString("\n"),
+        text = availableColors.joinToString("\n"),
         confirmButton = {
             Button(
                 onClick = { bool.value = false },
-                colors = ButtonDefaults.buttonColors(
-                    backgroundColor = BlueishIDK
-                )
+                colors = ButtonDefaults.buttonColors(backgroundColor = BlueishIDK)
             ) {
                 Text(text = "OK", color = Color.White)
             }
 
         }, bool = bool
     )
-}
-
-@ColorInt
-fun parseColor(@Size(min = 1) colorString: String): Int {
-    val error = "Unknown Color"
-    if (colorString[0] == '#') {
-        var color = colorString.substring(1).toLong(16)
-        if (colorString.length == 7) {
-            color = color or -0x1000000
-        } else require(colorString.length == 9) { error }
-        return color.toInt()
-    }
-    throw IllegalArgumentException(error)
 }
