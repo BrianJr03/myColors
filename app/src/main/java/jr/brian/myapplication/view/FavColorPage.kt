@@ -33,7 +33,6 @@ fun FavColorPage(
         Text(
             text = "Favorite Colors",
             fontSize = 30.sp,
-            color = Color.White,
             modifier = Modifier.padding(8.dp)
         )
         Spacer(modifier = Modifier.height(15.dp))
@@ -82,7 +81,6 @@ fun FavColorPage(
             Text(
                 text = "No Favorites Saved",
                 fontSize = 20.sp,
-                color = Color.White,
                 modifier = Modifier.padding(8.dp)
             )
         }
