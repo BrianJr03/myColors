@@ -13,6 +13,7 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
@@ -50,31 +51,7 @@ fun FavColorPage(
                     Text(text = "Remove All", color = Color.White)
                 }
                 Spacer(modifier = Modifier.height(15.dp))
-                LazyVerticalGrid(
-                    modifier = Modifier.fillMaxSize(),
-                    cells = GridCells.Adaptive(100.dp),
-                ) {
-                    // TODO - Find duplication bug
-                    items(list.distinct()) { color ->
-                        Box(
-                            modifier = Modifier
-                                .combinedClickable(
-                                    onLongClick = {
-//                                      TODO - Find duplication bug
-//                                    list.remove(color)
-//                                        .dao()
-//                                        .removeFavColor(color)
-
-                                    }) {}
-                                .padding(8.dp)
-                                .width(150.dp)
-                                .height(150.dp)
-                                .background(Color(parseColor(color.hex))),
-                        ) {
-                            Text(color.hex, color = Color.Black)
-                        }
-                    }
-                }
+                FavColorsList(list = list)
             }
 
         } else {
@@ -83,6 +60,37 @@ fun FavColorPage(
                 fontSize = 20.sp,
                 modifier = Modifier.padding(8.dp)
             )
+        }
+    }
+}
+
+@OptIn(ExperimentalFoundationApi::class)
+@Composable
+fun FavColorsList(list: SnapshotStateList<MyColor>) {
+    LazyVerticalGrid(
+        modifier = Modifier.fillMaxSize(),
+        cells = GridCells.Adaptive(100.dp),
+    ) {
+        // TODO - Find duplication bug
+        items(list.distinct()) { color ->
+            Box(
+                modifier = Modifier
+                    .combinedClickable(
+                        onLongClick = {
+//                                      TODO - Find duplication bug
+//                            list
+//                                .remove(color)
+//                                .dao()
+//                                .removeFavColor(color)
+
+                        }) {}
+                    .padding(8.dp)
+                    .width(150.dp)
+                    .height(150.dp)
+                    .background(Color(parseColor(color.hex))),
+            ) {
+                Text(color.hex, color = Color.Black)
+            }
         }
     }
 }

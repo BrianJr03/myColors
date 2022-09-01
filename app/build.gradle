@@ -82,4 +82,8 @@ dependencies {
     def roomVersion = "2.4.3"
     implementation("androidx.room:room-runtime:$roomVersion")
     kapt ("androidx.room:room-compiler:$roomVersion")
+
+    // View Pager
+    implementation "com.google.accompanist:accompanist-pager:0.23.1"
+    implementation "com.google.accompanist:accompanist-pager-indicators:0.23.1"
 }

@@ -6,7 +6,7 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import jr.brian.myapplication.model.remote.MyColor
 
-@Database(entities = [MyColor::class], version = 1, exportSchema = false)
+@Database(entities = [MyColor::class, StartUpIntro::class], version = 2, exportSchema = false)
 abstract class AppDatabase : RoomDatabase() {
 
     abstract fun dao(): FavColorsDao
@@ -20,7 +20,9 @@ abstract class AppDatabase : RoomDatabase() {
                     context,
                     AppDatabase::class.java,
                     "fav-colors"
-                ).allowMainThreadQueries().build()
+                ).allowMainThreadQueries()
+                    .fallbackToDestructiveMigration()
+                    .build()
             }
             return INSTANCE!!
         }

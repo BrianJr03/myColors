@@ -11,6 +11,12 @@ interface FavColorsDao {
     @Query("SELECT * FROM color_table")
     fun getFavColors(): List<MyColor>
 
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    fun passStartUp(sui: StartUpIntro)
+
+    @Query("SELECT * FROM start_up_table")
+    fun getStartUpPass(): List<StartUpIntro>
+
     @Delete
     fun removeFavColor(color: MyColor)
 

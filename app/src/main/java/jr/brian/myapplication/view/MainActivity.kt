@@ -41,10 +41,13 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun AppUI(context: Context, appDatabase: AppDatabase) {
     val navController = rememberNavController()
-    val dest = "home_page"
+    var dest = "start_up_page"
+    if (appDatabase.dao().getStartUpPass().isNotEmpty()) {
+        dest = "home_page"
+    }
     NavHost(navController = navController, startDestination = dest, builder = {
         composable(
-            dest,
+            "home_page",
             content = {
                 HomePage(
                     navController = navController,
@@ -54,11 +57,10 @@ fun AppUI(context: Context, appDatabase: AppDatabase) {
             })
         composable(
             "fav_color_page",
-            content = {
-                FavColorPage(
-                    appDB = appDatabase,
-                )
-            })
+            content = { FavColorPage(appDB = appDatabase) })
+        composable(
+            "start_up_page",
+            content = { StartUpViewPager(navController = navController, appDB = appDatabase) })
     })
 }
 

@@ -117,7 +117,10 @@ fun HomePage(
                                     numOfColorsInput = num.toString()
                                 }
                                 if (colorInput.isNotEmpty()) {
-                                    if (colorInput !in availableColors) {
+                                    if (
+                                        colorInput !in availableColors
+                                        && colorInput.toIntOrNull() !in 0..359
+                                    ) {
                                         makeToast(context, "Displaying Random Colors")
                                     }
                                     viewModel.getColors(colorInput.lowercase().trim(), num)
@@ -150,9 +153,7 @@ fun HomePage(
                                 makeToast(context, "Please Specify a Count")
                             }
                         },
-                        colors = ButtonDefaults.buttonColors(
-                            backgroundColor = BlueishIDK
-                        )
+                        colors = ButtonDefaults.buttonColors(backgroundColor = BlueishIDK)
                     ) {
                         Text(text = "Random", color = Color.White)
                     }
@@ -236,8 +237,8 @@ fun ShowDialog(
     if (bool.value) {
         AlertDialog(
             onDismissRequest = { bool.value = false },
-            title = { Text(title) },
-            text = { Text(text, fontSize = 16.sp) },
+            title = { Text(title, fontSize = 18.sp, color = BlueishIDK) },
+            text = { Text(text, fontSize = 16.sp, color = BlueishIDK) },
             confirmButton = confirmButton
         )
     }
