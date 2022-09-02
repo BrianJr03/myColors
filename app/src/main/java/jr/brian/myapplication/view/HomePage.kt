@@ -3,11 +3,12 @@ package jr.brian.myapplication.view
 import android.content.Context
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
-import androidx.compose.foundation.combinedClickable
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.GridCells
 import androidx.compose.foundation.lazy.LazyVerticalGrid
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
@@ -17,7 +18,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.TileMode
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.AnnotatedString
@@ -29,7 +33,10 @@ import androidx.navigation.NavController
 import jr.brian.myapplication.model.local.AppDatabase
 import jr.brian.myapplication.model.remote.MyColorResponse
 import jr.brian.myapplication.model.util.theme.BlueishIDK
+import jr.brian.myapplication.model.util.theme.Teal200
+import jr.brian.myapplication.model.util.theme.Transparent
 import jr.brian.myapplication.viewmodel.MainViewModel
+import kotlin.random.Random
 
 
 val additionalInfo =
@@ -65,7 +72,14 @@ fun HomePage(
 
     val shouldShowAvailColors = remember { mutableStateOf(false) }
 
-    EnableColorsDialog(bool = shouldShowAvailColors)
+    val gradient = Brush.horizontalGradient(
+        listOf(BlueishIDK, Teal200),
+        startX = 0.0f,
+        endX = 1000.0f,
+        tileMode = TileMode.Repeated
+    )
+
+    EnableInfoDialog(bool = shouldShowAvailColors)
 
     Column(
         modifier = Modifier
@@ -79,19 +93,28 @@ fun HomePage(
             TextField(
                 value = colorInput,
                 modifier = Modifier
-                    .padding(5.dp)
+                    .padding(horizontal = 12.dp, vertical = 10.dp)
                     .focusRequester(focusRequester)
-                    .fillMaxWidth(.5f),
+                    .fillMaxWidth(.5f)
+                    .background(
+                        brush = gradient,
+                        shape = RoundedCornerShape(percent = 10)
+                    ),
                 onValueChange = { colorInput = it },
-                label = { Text("Color or Hue #") },
+                label = { Text("Color or Hue #", color = Color.White) },
             )
+
             TextField(
                 value = numOfColorsInput,
                 modifier = Modifier
-                    .padding(5.dp)
-                    .focusRequester(focusRequester),
+                    .padding(horizontal = 12.dp, vertical = 10.dp)
+                    .focusRequester(focusRequester)
+                    .background(
+                        brush = gradient,
+                        shape = RoundedCornerShape(percent = 10)
+                    ),
                 onValueChange = { numOfColorsInput = it },
-                label = { Text("Count") },
+                label = { Text("Count", color = Color.White) },
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
             )
         }
@@ -135,7 +158,8 @@ fun HomePage(
                             } else {
                                 makeToast(context, "Please Specify a Count")
                             }
-                        }, colors = ButtonDefaults.buttonColors(backgroundColor = BlueishIDK)
+                        },
+                        colors = ButtonDefaults.buttonColors(backgroundColor = BlueishIDK),
                     ) {
                         Text(text = "Search", color = Color.White)
                     }
@@ -143,22 +167,12 @@ fun HomePage(
                     Button(
                         onClick = {
                             focusManager.clearFocus()
-                            colorInput = ""
-                            if (numOfColorsInput.toIntOrNull() != null) {
-                                var num = numOfColorsInput.toInt()
-                                if (num < 2) {
-                                    num = 2
-                                    numOfColorsInput = num.toString()
-                                } else if (num > 51) {
-                                    num = 51
-                                    numOfColorsInput = num.toString()
-                                }
-                                viewModel.getColors("random", num)
-                            } else {
-                                makeToast(context, "Please Specify a Count")
-                            }
+                            val random = Random.nextInt(2, 51)
+                            colorInput = "Random"
+                            numOfColorsInput = random.toString()
+                            viewModel.getColors("random", random)
                         },
-                        colors = ButtonDefaults.buttonColors(backgroundColor = BlueishIDK)
+                        colors = ButtonDefaults.buttonColors(backgroundColor = BlueishIDK),
                     ) {
                         Text(text = "Random", color = Color.White)
                     }
@@ -171,7 +185,7 @@ fun HomePage(
                                 launchSingleTop = true
                             }
                         },
-                        colors = ButtonDefaults.buttonColors(backgroundColor = BlueishIDK)
+                        colors = ButtonDefaults.buttonColors(backgroundColor = BlueishIDK),
                     ) {
                         Icon(
                             Icons.Default.Info,
@@ -186,22 +200,20 @@ fun HomePage(
                         .fillMaxWidth(), onClick = {
                         focusManager.clearFocus()
                         shouldShowAvailColors.value = true
-                    }, colors = ButtonDefaults.buttonColors(
-                        backgroundColor = BlueishIDK
-                    )
+                    }, colors = ButtonDefaults.buttonColors(backgroundColor = BlueishIDK)
                 ) {
                     Text(text = "View Additional Info", color = Color.White)
                 }
 
                 Button(
-                    modifier = Modifier
-                        .fillMaxWidth(), onClick = {
+                    onClick = {
                         focusManager.clearFocus()
                         navController.navigate("fav_color_page") {
                             popUpTo(navController.graph.startDestinationId)
                             launchSingleTop = true
                         }
-                    }, colors = ButtonDefaults.buttonColors(backgroundColor = BlueishIDK)
+                    },
+                    colors = ButtonDefaults.buttonColors(backgroundColor = BlueishIDK),
                 ) {
                     Text(text = "View Favorites", color = Color.White)
                 }
@@ -232,17 +244,20 @@ fun ColorsList(
         items(colors) { color ->
             Box(
                 modifier = Modifier
-                    .combinedClickable(
-                        onDoubleClick = {
-                            clipboardManager.setText(AnnotatedString(color.hex))
-                            makeToast(context, "Copied ${color.hex}")
-                        },
-                        onLongClick = {
-                            makeToast(context, "Saved ${color.hex}")
-                            appDB
-                                .dao()
-                                .insertFavColor(color)
-                        }) {}
+                    .pointerInput(Unit) {
+                        detectTapGestures(
+                            onDoubleTap = {
+                                clipboardManager.setText(AnnotatedString(color.hex))
+                                makeToast(context, "Copied ${color.hex}")
+                            },
+                            onLongPress = {
+                                makeToast(context, "Saved ${color.hex}")
+                                appDB
+                                    .dao()
+                                    .insertFavColor(color)
+                            },
+                        )
+                    }
                     .padding(8.dp)
                     .width(150.dp)
                     .height(150.dp)
@@ -257,7 +272,7 @@ fun ColorsList(
 @Composable
 fun ShowDialog(
     title: String,
-    text: String,
+    content: @Composable (() -> Unit)?,
     confirmButton: @Composable () -> Unit,
     bool: MutableState<Boolean>
 ) {
@@ -265,17 +280,23 @@ fun ShowDialog(
         AlertDialog(
             onDismissRequest = { bool.value = false },
             title = { Text(title, fontSize = 18.sp, color = BlueishIDK) },
-            text = { Text(text, fontSize = 16.sp, color = BlueishIDK) },
+            text = content,
             confirmButton = confirmButton
         )
     }
 }
 
 @Composable
-fun EnableColorsDialog(bool: MutableState<Boolean>) {
+fun EnableInfoDialog(bool: MutableState<Boolean>) {
     ShowDialog(
         title = "Available Colors to Search",
-        text = additionalInfo.joinToString("\n"),
+        content = {
+            Text(
+                additionalInfo.joinToString("\n"),
+                fontSize = 16.sp,
+                color = BlueishIDK
+            )
+        },
         confirmButton = {
             Button(
                 onClick = { bool.value = false },

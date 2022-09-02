@@ -15,6 +15,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.snapshots.SnapshotStateList
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalClipboardManager
@@ -38,14 +39,18 @@ fun FavColorPage(
         Text(
             text = "Favorite Colors",
             fontSize = 30.sp,
+            color = BlueishIDK,
             modifier = Modifier.padding(8.dp)
         )
         Spacer(modifier = Modifier.height(15.dp))
         if (list.isNotEmpty()) {
-            Column {
+            Column(
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
                 Button(
                     modifier = Modifier
-                        .fillMaxWidth(), onClick = {
+                        .fillMaxWidth(.50f), onClick = {
                         list.clear()
                         appDB.dao().removeAllFavColors()
                     }, colors = ButtonDefaults.buttonColors(
