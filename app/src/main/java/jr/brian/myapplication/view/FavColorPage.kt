@@ -26,7 +26,6 @@ import jr.brian.myapplication.model.local.AppDatabase
 import jr.brian.myapplication.model.remote.MyColor
 import jr.brian.myapplication.model.util.theme.BlueishIDK
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun FavColorPage(
     context: Context,
@@ -82,7 +81,7 @@ fun FavColorsList(context: Context, list: SnapshotStateList<MyColor>) {
         cells = GridCells.Adaptive(100.dp),
     ) {
         // TODO - Find duplication bug
-        items(list.distinct()) { color ->
+        items(list.distinct().reversed()) { color ->
             Box(
                 modifier = Modifier
                     .combinedClickable(

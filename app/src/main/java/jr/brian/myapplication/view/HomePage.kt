@@ -34,10 +34,8 @@ import jr.brian.myapplication.model.local.AppDatabase
 import jr.brian.myapplication.model.remote.MyColorResponse
 import jr.brian.myapplication.model.util.theme.BlueishIDK
 import jr.brian.myapplication.model.util.theme.Teal200
-import jr.brian.myapplication.model.util.theme.Transparent
 import jr.brian.myapplication.viewmodel.MainViewModel
 import kotlin.random.Random
-
 
 val additionalInfo =
     listOf(
@@ -51,6 +49,7 @@ val additionalInfo =
         "Lime",
         "Yellow",
         "Orange",
+        "Random",
         "\nHue Color Range: 0 - 359\n",
         "* Double-Click to Copy\n* Long-Press to Save"
     )
@@ -70,54 +69,30 @@ fun HomePage(
     val focusRequester = remember { FocusRequester() }
     val focusManager = LocalFocusManager.current
 
-    val shouldShowAvailColors = remember { mutableStateOf(false) }
+    val shouldShowAdditionalInfo = remember { mutableStateOf(false) }
 
-    val gradient = Brush.horizontalGradient(
-        listOf(BlueishIDK, Teal200),
-        startX = 0.0f,
-        endX = 1000.0f,
-        tileMode = TileMode.Repeated
-    )
-
-    EnableInfoDialog(bool = shouldShowAvailColors)
+    EnableInfoDialog(bool = shouldShowAdditionalInfo)
 
     Column(
         modifier = Modifier
             .fillMaxSize()
             .padding(10.dp)
     ) {
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceEvenly,
-        ) {
-            TextField(
-                value = colorInput,
-                modifier = Modifier
-                    .padding(horizontal = 12.dp, vertical = 10.dp)
-                    .focusRequester(focusRequester)
-                    .fillMaxWidth(.5f)
-                    .background(
-                        brush = gradient,
-                        shape = RoundedCornerShape(percent = 10)
-                    ),
-                onValueChange = { colorInput = it },
-                label = { Text("Color or Hue #", color = Color.White) },
-            )
+        MyTextField(
+            value = colorInput,
+            focusRequester = focusRequester,
+            onValueChange = { colorInput = it },
+            labelText = "Color or Hue #",
+            kbOptions = KeyboardOptions(keyboardType = KeyboardType.Text)
+        )
 
-            TextField(
-                value = numOfColorsInput,
-                modifier = Modifier
-                    .padding(horizontal = 12.dp, vertical = 10.dp)
-                    .focusRequester(focusRequester)
-                    .background(
-                        brush = gradient,
-                        shape = RoundedCornerShape(percent = 10)
-                    ),
-                onValueChange = { numOfColorsInput = it },
-                label = { Text("Count", color = Color.White) },
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
-            )
-        }
+        MyTextField(
+            value = numOfColorsInput,
+            focusRequester = focusRequester,
+            onValueChange = { numOfColorsInput = it },
+            labelText = "Count",
+            kbOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
+        )
 
         Row(Modifier.fillMaxWidth()) {
             Column(
@@ -132,39 +107,37 @@ fun HomePage(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceEvenly,
                 ) {
-                    Button(
-                        onClick = {
-                            focusManager.clearFocus()
-                            if (numOfColorsInput.toIntOrNull() != null) {
-                                var num = numOfColorsInput.toInt()
-                                if (num < 2) {
-                                    num = 2
-                                    numOfColorsInput = num.toString()
-                                } else if (num > 51) {
-                                    num = 51
-                                    numOfColorsInput = num.toString()
-                                }
-                                if (colorInput.isNotEmpty()) {
-                                    if (
-                                        colorInput !in additionalInfo
-                                        && colorInput.toIntOrNull() !in 0..359
-                                    ) {
-                                        makeToast(context, "Displaying Random Colors")
-                                    }
-                                    viewModel.getColors(colorInput.lowercase().trim(), num)
-                                } else {
-                                    makeToast(context, "Please Specify a Color")
-                                }
-                            } else {
-                                makeToast(context, "Please Specify a Count")
+
+                    MyButton(onClick = {
+                        focusManager.clearFocus()
+                        if (numOfColorsInput.toIntOrNull() != null) {
+                            var num = numOfColorsInput.toInt()
+                            if (num < 2) {
+                                num = 2
+                                numOfColorsInput = num.toString()
+                            } else if (num > 51) {
+                                num = 51
+                                numOfColorsInput = num.toString()
                             }
-                        },
-                        colors = ButtonDefaults.buttonColors(backgroundColor = BlueishIDK),
-                    ) {
+                            if (colorInput.isNotEmpty()) {
+                                if (
+                                    colorInput !in additionalInfo
+                                    && colorInput.toIntOrNull() !in 0..359
+                                ) {
+                                    makeToast(context, "Displaying Random Colors")
+                                }
+                                viewModel.getColors(colorInput.lowercase().trim(), num)
+                            } else {
+                                makeToast(context, "Please Specify a Color")
+                            }
+                        } else {
+                            makeToast(context, "Please Specify a Count")
+                        }
+                    }) {
                         Text(text = "Search", color = Color.White)
                     }
 
-                    Button(
+                    MyButton(
                         onClick = {
                             focusManager.clearFocus()
                             val random = Random.nextInt(2, 51)
@@ -172,12 +145,11 @@ fun HomePage(
                             numOfColorsInput = random.toString()
                             viewModel.getColors("random", random)
                         },
-                        colors = ButtonDefaults.buttonColors(backgroundColor = BlueishIDK),
                     ) {
                         Text(text = "Random", color = Color.White)
                     }
 
-                    Button(
+                    MyButton(
                         onClick = {
                             focusManager.clearFocus()
                             navController.navigate("start_up_page") {
@@ -185,7 +157,6 @@ fun HomePage(
                                 launchSingleTop = true
                             }
                         },
-                        colors = ButtonDefaults.buttonColors(backgroundColor = BlueishIDK),
                     ) {
                         Icon(
                             Icons.Default.Info,
@@ -195,27 +166,29 @@ fun HomePage(
                     }
                 }
 
-                Button(
-                    modifier = Modifier
-                        .fillMaxWidth(), onClick = {
-                        focusManager.clearFocus()
-                        shouldShowAvailColors.value = true
-                    }, colors = ButtonDefaults.buttonColors(backgroundColor = BlueishIDK)
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceEvenly
                 ) {
-                    Text(text = "View Additional Info", color = Color.White)
-                }
-
-                Button(
-                    onClick = {
-                        focusManager.clearFocus()
-                        navController.navigate("fav_color_page") {
-                            popUpTo(navController.graph.startDestinationId)
-                            launchSingleTop = true
+                    MyButton(
+                        onClick = {
+                            focusManager.clearFocus()
+                            shouldShowAdditionalInfo.value = true
                         }
-                    },
-                    colors = ButtonDefaults.buttonColors(backgroundColor = BlueishIDK),
-                ) {
-                    Text(text = "View Favorites", color = Color.White)
+                    ) {
+                        Text(text = "Additional Info", color = Color.White)
+                    }
+
+                    MyButton(
+                        onClick = {
+                            focusManager.clearFocus()
+                            navController.navigate("fav_color_page") {
+                                popUpTo(navController.graph.startDestinationId)
+                                launchSingleTop = true
+                            }
+                        }) {
+                        Text(text = "Favorites", color = Color.White)
+                    }
                 }
 
                 if (loading) {
@@ -226,6 +199,53 @@ fun HomePage(
                 flowResponse?.let { ColorsList(context, appDB, it) }
             }
         }
+    }
+}
+
+@Composable
+fun MyTextField(
+    value: String,
+    focusRequester: FocusRequester,
+    onValueChange: (String) -> Unit,
+    labelText: String,
+    kbOptions: KeyboardOptions
+) {
+    val gradient = Brush.horizontalGradient(
+        listOf(BlueishIDK, Teal200),
+        startX = 0.0f,
+        endX = 1000.0f,
+        tileMode = TileMode.Repeated
+    )
+    TextField(
+        value = value,
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 12.dp, vertical = 10.dp)
+            .focusRequester(focusRequester)
+            .background(
+                brush = gradient,
+                shape = RoundedCornerShape(percent = 10)
+            ),
+        colors = TextFieldDefaults.textFieldColors(
+            textColor = Color.White,
+            cursorColor = Color.White,
+            focusedIndicatorColor = Color.Transparent,
+            unfocusedIndicatorColor = Color.Transparent,
+            disabledIndicatorColor = Color.Transparent
+        ),
+        onValueChange = onValueChange,
+        label = { Text(labelText, color = Color.White) },
+        keyboardOptions = kbOptions
+    )
+}
+
+@Composable
+fun MyButton(onClick: () -> Unit, content: @Composable () -> Unit) {
+    Button(
+        onClick = onClick,
+        colors = ButtonDefaults.buttonColors(backgroundColor = BlueishIDK),
+    ) {
+        content.invoke()
     }
 }
 
@@ -251,10 +271,10 @@ fun ColorsList(
                                 makeToast(context, "Copied ${color.hex}")
                             },
                             onLongPress = {
-                                makeToast(context, "Saved ${color.hex}")
                                 appDB
                                     .dao()
                                     .insertFavColor(color)
+                                makeToast(context, "Saved ${color.hex}")
                             },
                         )
                     }
