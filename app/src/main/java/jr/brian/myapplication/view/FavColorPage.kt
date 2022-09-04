@@ -63,11 +63,14 @@ fun FavColorPage(
             }
 
         } else {
-            Text(
-                text = "No Favorites Saved",
-                fontSize = 20.sp,
-                modifier = Modifier.padding(8.dp)
-            )
+            Row(horizontalArrangement = Arrangement.Center) {
+                Text(
+                    text = "No Favorites Saved",
+                    color = BlueishIDK,
+                    fontSize = 20.sp,
+                    modifier = Modifier.padding(8.dp)
+                )
+            }
         }
     }
 }
