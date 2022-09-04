@@ -1,6 +1,6 @@
 # myColors
 
-A simple but useful app allowing one to generate colors
+A simple but useful app, allowing one to generate colors
 
 ![Intro](https://github.com/BrianJr03/myColors/blob/master/search_specific_small.jpg)
 ![Homepage](https://github.com/BrianJr03/myColors/blob/master/home_small.jpg)
