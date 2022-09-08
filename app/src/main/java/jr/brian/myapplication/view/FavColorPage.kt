@@ -1,8 +1,7 @@
 package jr.brian.myapplication.view
 
-import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.background
-import androidx.compose.foundation.combinedClickable
+import androidx.compose.foundation.*
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.GridCells
 import androidx.compose.foundation.lazy.LazyVerticalGrid
@@ -77,13 +76,16 @@ fun FavColorPage(dao: FavColorsDao) {
 fun FavColorsList(dao: FavColorsDao, list: SnapshotStateList<MyColor>) {
     val context = LocalContext.current
     val clipboardManager = LocalClipboardManager.current
+    val interactionSource = remember { MutableInteractionSource() }
+
     LazyVerticalGrid(
         modifier = Modifier.fillMaxSize(),
         cells = GridCells.Adaptive(100.dp),
     ) {
-        items(list.distinct().reversed()) { color ->
+        items(list.reversed()) { color ->
             Box(
                 modifier = Modifier
+                    .indication(interactionSource, LocalIndication.current)
                     .combinedClickable(
                         onDoubleClick = {
                             clipboardManager.setText(AnnotatedString(color.hex))

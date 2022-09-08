@@ -85,21 +85,26 @@ fun HomePage(
             .fillMaxSize()
             .padding(10.dp)
     ) {
-        MyTextField(
-            value = colorInput,
-            focusRequester = focusRequester,
-            onValueChange = { colorInput = it },
-            labelText = "Color or Hue #",
-            kbOptions = KeyboardOptions(keyboardType = KeyboardType.Text)
-        )
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceEvenly,
+        ) {
+            MyTextField(
+                value = colorInput,
+                focusRequester = focusRequester,
+                onValueChange = { if (it.length <= 15) colorInput = it },
+                labelText = "Color",
+                kbOptions = KeyboardOptions(keyboardType = KeyboardType.Text)
+            )
 
-        MyTextField(
-            value = numOfColorsInput,
-            focusRequester = focusRequester,
-            onValueChange = { numOfColorsInput = it },
-            labelText = "Count",
-            kbOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
-        )
+            MyTextField(
+                value = numOfColorsInput,
+                focusRequester = focusRequester,
+                onValueChange = { if (it.length <= 2) numOfColorsInput = it },
+                labelText = "#",
+                kbOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
+            )
+        }
 
         Row(Modifier.fillMaxWidth()) {
             Column(
@@ -222,7 +227,7 @@ fun MyTextField(
     TextField(
         value = value,
         modifier = Modifier
-            .fillMaxWidth()
+            .fillMaxWidth(.5f)
             .padding(horizontal = 12.dp, vertical = 10.dp)
             .focusRequester(focusRequester)
             .background(
@@ -238,7 +243,8 @@ fun MyTextField(
         ),
         onValueChange = onValueChange,
         label = { Text(labelText, color = Color.White) },
-        keyboardOptions = kbOptions
+        keyboardOptions = kbOptions,
+        singleLine = true,
     )
 }
 
