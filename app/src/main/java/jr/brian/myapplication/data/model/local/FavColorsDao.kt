@@ -1,7 +1,7 @@
-package jr.brian.myapplication.model.local
+package jr.brian.myapplication.data.model.local
 
 import androidx.room.*
-import jr.brian.myapplication.model.remote.MyColor
+import jr.brian.myapplication.data.model.remote.MyColor
 
 @Dao
 interface FavColorsDao {

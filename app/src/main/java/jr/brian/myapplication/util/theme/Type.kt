@@ -1,4 +1,4 @@
-package jr.brian.myapplication.model.util.theme
+package jr.brian.myapplication.util.theme
 
 import androidx.compose.material.Typography
 import androidx.compose.ui.text.TextStyle

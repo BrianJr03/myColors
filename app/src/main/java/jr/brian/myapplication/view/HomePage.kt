@@ -2,8 +2,11 @@ package jr.brian.myapplication.view
 
 import android.content.Context
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.LocalIndication
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.foundation.indication
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.GridCells
 import androidx.compose.foundation.lazy.LazyVerticalGrid
@@ -23,17 +26,19 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.TileMode
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalClipboardManager
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.NavController
-import jr.brian.myapplication.model.local.AppDatabase
-import jr.brian.myapplication.model.remote.MyColorResponse
-import jr.brian.myapplication.model.util.theme.BlueishIDK
-import jr.brian.myapplication.model.util.theme.Teal200
+import jr.brian.myapplication.data.model.local.AppDatabase
+import jr.brian.myapplication.data.model.remote.MyColorResponse
+import jr.brian.myapplication.util.makeToast
+import jr.brian.myapplication.util.parseColor
+import jr.brian.myapplication.util.theme.BlueishIDK
+import jr.brian.myapplication.util.theme.Teal200
 import jr.brian.myapplication.viewmodel.MainViewModel
 import kotlin.random.Random
 
@@ -56,11 +61,13 @@ val additionalInfo =
 
 @Composable
 fun HomePage(
-    context: Context,
-    navController: NavController,
+    onNavigateToStartUp: () -> Unit,
+    onNavigateToFavorites: () -> Unit,
     appDB: AppDatabase,
     viewModel: MainViewModel = hiltViewModel()
 ) {
+    val context = LocalContext.current
+
     var numOfColorsInput by remember { mutableStateOf("") }
     var colorInput by remember { mutableStateOf("") }
     val flowResponse by viewModel.flowResponse.collectAsState()
@@ -152,10 +159,7 @@ fun HomePage(
                     MyButton(
                         onClick = {
                             focusManager.clearFocus()
-                            navController.navigate("start_up_page") {
-                                popUpTo(navController.graph.startDestinationId)
-                                launchSingleTop = true
-                            }
+                            onNavigateToStartUp()
                         },
                     ) {
                         Icon(
@@ -182,10 +186,9 @@ fun HomePage(
                     MyButton(
                         onClick = {
                             focusManager.clearFocus()
-                            navController.navigate("fav_color_page") {
-                                popUpTo(navController.graph.startDestinationId)
-                                launchSingleTop = true
-                            }
+
+//                            shouldShowFavorites.value = true
+                            onNavigateToFavorites()
                         }) {
                         Text(text = "Favorites", color = Color.White)
                     }
@@ -257,6 +260,8 @@ fun ColorsList(
     colors: MyColorResponse
 ) {
     val clipboardManager = LocalClipboardManager.current
+    val interactionSource = remember { MutableInteractionSource() }
+
     LazyVerticalGrid(
         modifier = Modifier.fillMaxSize(),
         cells = GridCells.Adaptive(100.dp),
@@ -264,6 +269,7 @@ fun ColorsList(
         items(colors) { color ->
             Box(
                 modifier = Modifier
+                    .indication(interactionSource, LocalIndication.current)
                     .pointerInput(Unit) {
                         detectTapGestures(
                             onDoubleTap = {

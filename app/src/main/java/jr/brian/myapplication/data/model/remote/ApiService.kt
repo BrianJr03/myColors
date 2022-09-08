@@ -1,4 +1,4 @@
-package jr.brian.myapplication.model.remote
+package jr.brian.myapplication.data.model.remote
 
 import retrofit2.http.GET
 import retrofit2.http.Path

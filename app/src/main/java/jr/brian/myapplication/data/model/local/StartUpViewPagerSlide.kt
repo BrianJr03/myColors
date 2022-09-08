@@ -1,4 +1,4 @@
-package jr.brian.myapplication.model.local
+package jr.brian.myapplication.data.model.local
 
 data class StartUpViewPagerSlide(
     val title: String,

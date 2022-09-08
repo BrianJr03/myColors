@@ -3,8 +3,8 @@ package jr.brian.myapplication.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import jr.brian.myapplication.model.remote.MyColorResponse
-import jr.brian.myapplication.model.repository.Repository
+import jr.brian.myapplication.data.model.remote.MyColorResponse
+import jr.brian.myapplication.data.model.repository.Repository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject

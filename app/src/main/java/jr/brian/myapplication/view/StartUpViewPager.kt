@@ -15,20 +15,20 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavController
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.HorizontalPagerIndicator
 import com.google.accompanist.pager.rememberPagerState
-import jr.brian.myapplication.model.local.AppDatabase
-import jr.brian.myapplication.model.local.StartUpIntro
-import jr.brian.myapplication.model.local.pagerData
-import jr.brian.myapplication.model.remote.MyColor
-import jr.brian.myapplication.model.util.theme.BlueishIDK
+import jr.brian.myapplication.data.model.local.AppDatabase
+import jr.brian.myapplication.data.model.local.StartUpIntro
+import jr.brian.myapplication.data.model.local.pagerData
+import jr.brian.myapplication.data.model.remote.MyColor
+import jr.brian.myapplication.util.parseColor
+import jr.brian.myapplication.util.theme.BlueishIDK
 
 @OptIn(ExperimentalPagerApi::class)
 @Composable
-fun StartUpViewPager(navController: NavController, appDB: AppDatabase) {
+fun StartUpViewPager(onNavigateToHome: () -> Unit, appDB: AppDatabase) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -70,10 +70,7 @@ fun StartUpViewPager(navController: NavController, appDB: AppDatabase) {
         Button(
             onClick = {
                 appDB.dao().passStartUp(StartUpIntro(true))
-                navController.navigate("home_page") {
-                    popUpTo(navController.graph.startDestinationId)
-                    launchSingleTop = true
-                }
+                onNavigateToHome()
             },
             modifier = Modifier.align(Alignment.CenterHorizontally),
             colors = ButtonDefaults.buttonColors(backgroundColor = BlueishIDK)

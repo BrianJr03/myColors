@@ -1,6 +1,5 @@
 package jr.brian.myapplication.view
 
-import android.content.Context
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.combinedClickable
@@ -12,28 +11,26 @@ import androidx.compose.material.Button
 import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.snapshots.SnapshotStateList
+import androidx.compose.runtime.toMutableStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalClipboardManager
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import jr.brian.myapplication.model.local.AppDatabase
-import jr.brian.myapplication.model.remote.MyColor
-import jr.brian.myapplication.model.util.theme.BlueishIDK
+import jr.brian.myapplication.data.model.local.AppDatabase
+import jr.brian.myapplication.data.model.remote.MyColor
+import jr.brian.myapplication.util.makeToast
+import jr.brian.myapplication.util.parseColor
+import jr.brian.myapplication.util.theme.BlueishIDK
 
 @Composable
-fun FavColorPage(
-    context: Context,
-    appDB: AppDatabase,
-) {
-    val colors = appDB.dao().getFavColors()
-    val list = remember { mutableStateListOf<MyColor>() }
-    colors.forEach { list.add(it) }
+fun FavColorPage(appDB: AppDatabase) {
+    val colors = remember { appDB.dao().getFavColors().toMutableStateList() }
     Column {
         Text(
             text = "Favorite Colors",
@@ -42,7 +39,7 @@ fun FavColorPage(
             modifier = Modifier.padding(8.dp)
         )
         Spacer(modifier = Modifier.height(15.dp))
-        if (list.isNotEmpty()) {
+        if (colors.isNotEmpty()) {
             Column(
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally
@@ -50,7 +47,7 @@ fun FavColorPage(
                 Button(
                     modifier = Modifier
                         .fillMaxWidth(.50f), onClick = {
-                        list.clear()
+                        colors.clear()
                         appDB.dao().removeAllFavColors()
                     }, colors = ButtonDefaults.buttonColors(
                         backgroundColor = BlueishIDK
@@ -59,7 +56,7 @@ fun FavColorPage(
                     Text(text = "Remove All", color = Color.White)
                 }
                 Spacer(modifier = Modifier.height(15.dp))
-                FavColorsList(list = list, context = context)
+                FavColorsList(appDB = appDB, list = colors)
             }
 
         } else {
@@ -77,13 +74,13 @@ fun FavColorPage(
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun FavColorsList(context: Context, list: SnapshotStateList<MyColor>) {
+fun FavColorsList(appDB: AppDatabase, list: SnapshotStateList<MyColor>) {
+    val context = LocalContext.current
     val clipboardManager = LocalClipboardManager.current
     LazyVerticalGrid(
         modifier = Modifier.fillMaxSize(),
         cells = GridCells.Adaptive(100.dp),
     ) {
-        // TODO - Find duplication bug
         items(list.distinct().reversed()) { color ->
             Box(
                 modifier = Modifier
@@ -93,11 +90,10 @@ fun FavColorsList(context: Context, list: SnapshotStateList<MyColor>) {
                             makeToast(context, "Copied ${color.hex}")
                         },
                         onLongClick = {
-//                                      TODO - Find duplication bug
-//                            list
-//                                .remove(color)
-//                                .dao()
-//                                .removeFavColor(color)
+                            list.remove(color)
+                            appDB
+                                .dao()
+                                .removeFavColor(color)
 
                         }) {}
                     .padding(8.dp)

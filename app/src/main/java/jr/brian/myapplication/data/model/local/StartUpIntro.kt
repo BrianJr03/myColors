@@ -1,4 +1,4 @@
-package jr.brian.myapplication.model.local
+package jr.brian.myapplication.data.model.local
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey

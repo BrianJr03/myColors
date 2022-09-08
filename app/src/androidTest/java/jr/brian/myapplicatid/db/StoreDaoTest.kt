@@ -6,9 +6,9 @@ import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.SmallTest
 import com.google.common.truth.Truth
-import jr.brian.myapplication.model.local.AppDatabase
-import jr.brian.myapplication.model.local.FavColorsDao
-import jr.brian.myapplication.model.remote.MyColor
+import jr.brian.myapplication.data.model.local.AppDatabase
+import jr.brian.myapplication.data.model.local.FavColorsDao
+import jr.brian.myapplication.data.model.remote.MyColor
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.runTest
