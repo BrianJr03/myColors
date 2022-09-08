@@ -100,6 +100,7 @@ fun FavColorsList(dao: FavColorsDao, list: SnapshotStateList<MyColor>) {
                     .width(150.dp)
                     .height(150.dp)
                     .background(Color(parseColor(color.hex))),
+                contentAlignment = Alignment.Center
             ) {
                 Text(color.hex, color = Color.Black)
             }
