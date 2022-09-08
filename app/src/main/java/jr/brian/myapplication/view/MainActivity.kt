@@ -13,21 +13,23 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import dagger.hilt.android.AndroidEntryPoint
 import jr.brian.logincompose.ui.theme.LoginComposeTheme
-import jr.brian.myapplication.data.model.local.AppDatabase
+import jr.brian.myapplication.data.model.local.FavColorsDao
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
-    private lateinit var appDatabase: AppDatabase
+    var dao: FavColorsDao? = null
+        @Inject set
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        appDatabase = AppDatabase.getInstance(this.applicationContext)!!
         setContent {
             LoginComposeTheme {
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colors.background
                 ) {
-                    AppUI(appDatabase)
+                    dao?.let { AppUI(it) }
                 }
             }
         }
@@ -35,15 +37,15 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun AppUI(appDatabase: AppDatabase) {
+fun AppUI(dao: FavColorsDao) {
     val navController = rememberNavController()
-    val dest = if (appDatabase.dao().getStartUpPass().isNotEmpty()) "home_page" else "start_up_page"
+    val dest = if (dao.getStartUpPass().isNotEmpty()) "home_page" else "start_up_page"
     NavHost(navController = navController, startDestination = dest, builder = {
         composable(
             "home_page",
             content = {
                 HomePage(
-                    appDB = appDatabase,
+                    dao = dao,
                     onNavigateToStartUp = {
                         navController.navigate("start_up_page") {
                             popUpTo(navController.graph.startDestinationId)
@@ -60,7 +62,7 @@ fun AppUI(appDatabase: AppDatabase) {
             })
         composable(
             "fav_color_page",
-            content = { FavColorPage(appDB = appDatabase) })
+            content = { FavColorPage(dao = dao) })
         composable(
             "start_up_page",
             content = {
@@ -69,7 +71,7 @@ fun AppUI(appDatabase: AppDatabase) {
                         popUpTo(navController.graph.startDestinationId)
                         launchSingleTop = true
                     }
-                }, appDB = appDatabase)
+                }, dao = dao)
             })
     })
 }

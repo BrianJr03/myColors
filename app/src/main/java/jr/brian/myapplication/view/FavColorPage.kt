@@ -22,15 +22,15 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import jr.brian.myapplication.data.model.local.AppDatabase
+import jr.brian.myapplication.data.model.local.FavColorsDao
 import jr.brian.myapplication.data.model.remote.MyColor
 import jr.brian.myapplication.util.makeToast
 import jr.brian.myapplication.util.parseColor
 import jr.brian.myapplication.util.theme.BlueishIDK
 
 @Composable
-fun FavColorPage(appDB: AppDatabase) {
-    val colors = remember { appDB.dao().getFavColors().toMutableStateList() }
+fun FavColorPage(dao: FavColorsDao) {
+    val colors = remember { dao.getFavColors().toMutableStateList() }
     Column {
         Text(
             text = "Favorite Colors",
@@ -48,7 +48,7 @@ fun FavColorPage(appDB: AppDatabase) {
                     modifier = Modifier
                         .fillMaxWidth(.50f), onClick = {
                         colors.clear()
-                        appDB.dao().removeAllFavColors()
+                        dao.removeAllFavColors()
                     }, colors = ButtonDefaults.buttonColors(
                         backgroundColor = BlueishIDK
                     )
@@ -56,7 +56,7 @@ fun FavColorPage(appDB: AppDatabase) {
                     Text(text = "Remove All", color = Color.White)
                 }
                 Spacer(modifier = Modifier.height(15.dp))
-                FavColorsList(appDB = appDB, list = colors)
+                FavColorsList(dao = dao, list = colors)
             }
 
         } else {
@@ -74,7 +74,7 @@ fun FavColorPage(appDB: AppDatabase) {
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun FavColorsList(appDB: AppDatabase, list: SnapshotStateList<MyColor>) {
+fun FavColorsList(dao: FavColorsDao, list: SnapshotStateList<MyColor>) {
     val context = LocalContext.current
     val clipboardManager = LocalClipboardManager.current
     LazyVerticalGrid(
@@ -91,9 +91,7 @@ fun FavColorsList(appDB: AppDatabase, list: SnapshotStateList<MyColor>) {
                         },
                         onLongClick = {
                             list.remove(color)
-                            appDB
-                                .dao()
-                                .removeFavColor(color)
+                            dao.removeFavColor(color)
 
                         }) {}
                     .padding(8.dp)

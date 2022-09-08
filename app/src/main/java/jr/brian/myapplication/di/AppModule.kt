@@ -1,14 +1,19 @@
 package jr.brian.myapplication.di
 
+import android.content.Context
+import androidx.room.Room
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import hu.akarnokd.rxjava3.retrofit.RxJava3CallAdapterFactory
+import jr.brian.myapplication.data.model.local.AppDatabase
+import jr.brian.myapplication.data.model.local.FavColorsDao
 import jr.brian.myapplication.data.model.remote.ApiService
 import jr.brian.myapplication.data.model.remote.Constants.BASE_URL
-import jr.brian.myapplication.data.model.repository.Repository
 import jr.brian.myapplication.data.model.repository.RepoImpl
+import jr.brian.myapplication.data.model.repository.Repository
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
@@ -32,7 +37,22 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideRepository(apiService: ApiService) : Repository {
-        return RepoImpl(apiService)
+    fun provideRepository(apiService: ApiService): Repository = RepoImpl(apiService)
+
+    @Provides
+    @Singleton
+    fun provideDao(appDatabase: AppDatabase): FavColorsDao = appDatabase.dao()
+
+    @Provides
+    @Singleton
+    fun provideAppDatabase(@ApplicationContext appContext: Context): AppDatabase {
+        return Room.databaseBuilder(
+            appContext,
+            AppDatabase::class.java,
+            "fav-colors"
+        )
+            .allowMainThreadQueries()
+            .fallbackToDestructiveMigration()
+            .build()
     }
 }

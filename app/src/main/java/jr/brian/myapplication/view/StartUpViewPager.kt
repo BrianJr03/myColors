@@ -19,7 +19,7 @@ import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.HorizontalPagerIndicator
 import com.google.accompanist.pager.rememberPagerState
-import jr.brian.myapplication.data.model.local.AppDatabase
+import jr.brian.myapplication.data.model.local.FavColorsDao
 import jr.brian.myapplication.data.model.local.StartUpIntro
 import jr.brian.myapplication.data.model.local.pagerData
 import jr.brian.myapplication.data.model.remote.MyColor
@@ -28,7 +28,7 @@ import jr.brian.myapplication.util.theme.BlueishIDK
 
 @OptIn(ExperimentalPagerApi::class)
 @Composable
-fun StartUpViewPager(onNavigateToHome: () -> Unit, appDB: AppDatabase) {
+fun StartUpViewPager(onNavigateToHome: () -> Unit, dao: FavColorsDao) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -69,7 +69,7 @@ fun StartUpViewPager(onNavigateToHome: () -> Unit, appDB: AppDatabase) {
         Spacer(modifier = Modifier.height(20.dp))
         Button(
             onClick = {
-                appDB.dao().passStartUp(StartUpIntro(true))
+                dao.passStartUp(StartUpIntro(true))
                 onNavigateToHome()
             },
             modifier = Modifier.align(Alignment.CenterHorizontally),

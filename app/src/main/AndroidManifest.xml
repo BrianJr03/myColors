@@ -19,7 +19,6 @@
         <activity
             android:name=".view.MainActivity"
             android:exported="true"
-            android:label="@string/app_name"
             android:theme="@style/Theme.MyColor">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

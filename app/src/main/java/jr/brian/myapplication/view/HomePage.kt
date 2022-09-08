@@ -33,7 +33,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
-import jr.brian.myapplication.data.model.local.AppDatabase
+import jr.brian.myapplication.data.model.local.FavColorsDao
 import jr.brian.myapplication.data.model.remote.MyColorResponse
 import jr.brian.myapplication.util.makeToast
 import jr.brian.myapplication.util.parseColor
@@ -63,7 +63,7 @@ val additionalInfo =
 fun HomePage(
     onNavigateToStartUp: () -> Unit,
     onNavigateToFavorites: () -> Unit,
-    appDB: AppDatabase,
+    dao: FavColorsDao,
     viewModel: MainViewModel = hiltViewModel()
 ) {
     val context = LocalContext.current
@@ -199,7 +199,7 @@ fun HomePage(
                     CircularProgressIndicator()
                 }
 
-                flowResponse?.let { ColorsList(context, appDB, it) }
+                flowResponse?.let { ColorsList(context, dao, it) }
             }
         }
     }
@@ -256,7 +256,7 @@ fun MyButton(onClick: () -> Unit, content: @Composable () -> Unit) {
 @Composable
 fun ColorsList(
     context: Context,
-    appDB: AppDatabase,
+    dao: FavColorsDao,
     colors: MyColorResponse
 ) {
     val clipboardManager = LocalClipboardManager.current
@@ -277,9 +277,7 @@ fun ColorsList(
                                 makeToast(context, "Copied ${color.hex}")
                             },
                             onLongPress = {
-                                appDB
-                                    .dao()
-                                    .insertFavColor(color)
+                                dao.insertFavColor(color)
                                 makeToast(context, "Saved ${color.hex}")
                             },
                         )
