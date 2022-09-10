@@ -191,8 +191,6 @@ fun HomePage(
                     MyButton(
                         onClick = {
                             focusManager.clearFocus()
-
-//                            shouldShowFavorites.value = true
                             onNavigateToFavorites()
                         }) {
                         Text(text = "Favorites", color = Color.White)

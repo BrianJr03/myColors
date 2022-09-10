@@ -43,6 +43,10 @@ fun FavColorPage(dao: FavColorsDao) {
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
+                Text(text = "Long-Press to Delete", color = BlueishIDK)
+                Spacer(modifier = Modifier.height(15.dp))
+                Text(text = "OR", color = BlueishIDK)
+                Spacer(modifier = Modifier.height(15.dp))
                 Button(
                     modifier = Modifier
                         .fillMaxWidth(.50f), onClick = {
