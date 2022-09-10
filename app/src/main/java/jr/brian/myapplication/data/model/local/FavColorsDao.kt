@@ -16,12 +16,4 @@ interface FavColorsDao {
 
     @Query("DELETE FROM color_table")
     fun removeAllFavColors()
-
-    // TODO - Save in DataStore
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun passStartUp(sui: StartUpIntro)
-
-    // TODO - Save in DataStore
-    @Query("SELECT * FROM start_up_table")
-    fun getStartUpPass(): List<StartUpIntro>
 }

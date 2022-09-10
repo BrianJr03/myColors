@@ -11,24 +11,30 @@ import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.HorizontalPagerIndicator
 import com.google.accompanist.pager.rememberPagerState
-import jr.brian.myapplication.data.model.local.FavColorsDao
-import jr.brian.myapplication.data.model.local.StartUpIntro
 import jr.brian.myapplication.data.model.local.pagerData
 import jr.brian.myapplication.data.model.remote.MyColor
+import jr.brian.myapplication.util.MyDataStore
 import jr.brian.myapplication.util.parseColor
 import jr.brian.myapplication.util.theme.BlueishIDK
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalPagerApi::class)
 @Composable
-fun StartUpViewPager(onNavigateToHome: () -> Unit, dao: FavColorsDao) {
+fun StartUpViewPager(onNavigateToHome: () -> Unit) {
+    val context = LocalContext.current
+    val dataStore = MyDataStore(context)
+    val scope = rememberCoroutineScope()
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -69,7 +75,9 @@ fun StartUpViewPager(onNavigateToHome: () -> Unit, dao: FavColorsDao) {
         Spacer(modifier = Modifier.height(20.dp))
         Button(
             onClick = {
-                dao.passStartUp(StartUpIntro(true))
+                scope.launch {
+                    dataStore.saveStartUpPassStatus(true)
+                }
                 onNavigateToHome()
             },
             modifier = Modifier.align(Alignment.CenterHorizontally),
