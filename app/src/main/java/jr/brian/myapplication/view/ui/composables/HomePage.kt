@@ -14,7 +14,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.runtime.*
@@ -80,11 +79,38 @@ fun HomePage(
     val focusManager = LocalFocusManager.current
 
     val shouldShowAdditionalInfo = remember { mutableStateOf(false) }
-    val shouldShowButtons = remember { mutableStateOf(true) }
+    val isShowingButtons = remember { mutableStateOf(false) }
 
     val lazyListState = rememberLazyListState()
 
-    EnableInfoDialog(bool = shouldShowAdditionalInfo)
+    EnableInfoDialog(isShowing = shouldShowAdditionalInfo, onNavigateToStartUp)
+
+    val searchOnClick = {
+        focusManager.clearFocus()
+        if (numOfColorsInput.toIntOrNull() != null) {
+            var num = numOfColorsInput.toInt()
+            if (num < 2) {
+                num = 2
+                numOfColorsInput = num.toString()
+            } else if (num > 51) {
+                num = 51
+                numOfColorsInput = num.toString()
+            }
+            if (colorInput.isNotEmpty()) {
+                if (
+                    colorInput !in additionalInfo
+                    && colorInput.toIntOrNull() !in 0..359
+                ) {
+                    colorInput = "Random"
+                }
+                viewModel.getColors(colorInput.lowercase().trim(), num)
+            } else {
+                makeToast(context, "Please Specify a Color")
+            }
+        } else {
+            makeToast(context, "Please Specify a Count")
+        }
+    }
 
     Scaffold(
         content = {
@@ -96,6 +122,7 @@ fun HomePage(
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceEvenly,
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
                     MyTextField(
                         value = colorInput,
@@ -112,127 +139,107 @@ fun HomePage(
                         labelText = "#",
                         kbOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
                     )
+
+                    AnimatedVisibility(visible = !isShowingButtons.value) {
+                        MyButton(onClick = { searchOnClick.invoke() }) {
+                            Text(text = "Search", color = Color.White)
+                        }
+                    }
                 }
 
-                AnimatedVisibility(shouldShowButtons.value) {
-                    Column(
+                AnimatedVisibility(isShowingButtons.value) {
+                    Row(
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(5.dp),
-                        verticalArrangement = Arrangement.Center,
-                        horizontalAlignment = Alignment.CenterHorizontally
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.SpaceEvenly,
                     ) {
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.SpaceEvenly,
-                        ) {
 
-                            MyButton(onClick = {
+                        MyButton(onClick = { searchOnClick.invoke() }) {
+                            Text(text = "Search", color = Color.White)
+                        }
+
+                        MyButton(
+                            onClick = {
                                 focusManager.clearFocus()
-                                if (numOfColorsInput.toIntOrNull() != null) {
-                                    var num = numOfColorsInput.toInt()
-                                    if (num < 2) {
-                                        num = 2
-                                        numOfColorsInput = num.toString()
-                                    } else if (num > 51) {
-                                        num = 51
-                                        numOfColorsInput = num.toString()
-                                    }
-                                    if (colorInput.isNotEmpty()) {
-                                        if (
-                                            colorInput !in additionalInfo
-                                            && colorInput.toIntOrNull() !in 0..359
-                                        ) {
-                                            makeToast(context, "Displaying Random Colors")
-                                        }
-                                        viewModel.getColors(colorInput.lowercase().trim(), num)
-                                    } else {
-                                        makeToast(context, "Please Specify a Color")
-                                    }
-                                } else {
-                                    makeToast(context, "Please Specify a Count")
-                                }
-                            }) {
-                                Text(text = "Search", color = Color.White)
-                            }
-
-                            MyButton(
-                                onClick = {
-                                    focusManager.clearFocus()
-                                    val random = Random.nextInt(2, 51)
-                                    colorInput = "Random"
-                                    numOfColorsInput = random.toString()
-                                    viewModel.getColors("random", random)
-                                },
-                            ) {
-                                Text(text = "Random", color = Color.White)
-                            }
-
-                            MyButton(
-                                onClick = {
-                                    focusManager.clearFocus()
-                                    onNavigateToStartUp()
-                                },
-                            ) {
-                                Icon(
-                                    Icons.Default.Info,
-                                    contentDescription = "info",
-                                    tint = Color.White
-                                )
-                            }
-                        }
-
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.SpaceEvenly
+                                val random = Random.nextInt(2, 51)
+                                colorInput = "Random"
+                                numOfColorsInput = random.toString()
+                                viewModel.getColors("random", random)
+                            },
                         ) {
-                            MyButton(
-                                onClick = {
-                                    focusManager.clearFocus()
-                                    shouldShowAdditionalInfo.value = true
-                                }
-                            ) {
-                                Text(text = "Additional Info", color = Color.White)
-                            }
-
-                            MyButton(
-                                onClick = {
-                                    focusManager.clearFocus()
-                                    onNavigateToFavorites()
-                                }) {
-                                Text(text = "Favorites", color = Color.White)
-                            }
+                            Text(text = "Random", color = Color.White)
                         }
 
-                        if (loading) {
-                            Spacer(modifier = Modifier.height(50.dp))
-                            CircularProgressIndicator()
+                        MyButton(
+                            onClick = {
+                                focusManager.clearFocus()
+                                shouldShowAdditionalInfo.value = true
+                            }
+                        ) {
+                            Text(text = "Info", color = Color.White)
+                        }
+
+                        MyButton(
+                            onClick = {
+                                focusManager.clearFocus()
+                                onNavigateToFavorites()
+                            }) {
+                            Text(text = "Favs", color = Color.White)
                         }
                     }
+//                    Column(
+//                        modifier = Modifier
+//                            .fillMaxWidth()
+//                            .padding(5.dp),
+//                        verticalArrangement = Arrangement.Center,
+//                        horizontalAlignment = Alignment.CenterHorizontally
+//                    ) {
+//
+//
+//                        Row(
+//                            modifier = Modifier.fillMaxWidth(),
+//                            horizontalArrangement = Arrangement.SpaceEvenly
+//                        ) {
+//
+//                        }
+//                    }
+                }
+
+                if (loading) {
+                    Spacer(modifier = Modifier.height(50.dp))
+                    CircularProgressIndicator()
                 }
 
                 flowResponse?.let { ColorsList(context, dao, it, lazyListState) }
 
             }
         },
+        floatingActionButtonPosition = FabPosition.End,
         floatingActionButton = {
             if (lazyListState.isScrollingUp()) {
                 FloatingActionButton(
-                    onClick = {
-                        shouldShowButtons.value = !shouldShowButtons.value
-                    },
+                    onClick = { isShowingButtons.value = !isShowingButtons.value },
                     backgroundColor = BlueishIDK,
                 ) {
-                    if (shouldShowButtons.value) {
-                        Icon(Icons.Filled.KeyboardArrowUp, "Toggle Buttons")
+                    if (isShowingButtons.value) {
+                        Icon(
+                            Icons.Filled.KeyboardArrowUp,
+                            "Toggle Buttons",
+                            tint = Color.White
+                        )
                     } else {
-                        Icon(Icons.Filled.KeyboardArrowDown, "Toggle Buttons")
+                        Icon(
+                            Icons.Filled.KeyboardArrowDown,
+                            "Toggle Buttons",
+                            tint = Color.White
+                        )
                     }
                 }
             }
-        },
-        floatingActionButtonPosition = FabPosition.End,
-        isFloatingActionButtonDocked = true,
+        }
+
     )
 }
 
@@ -284,6 +291,7 @@ fun MyButton(onClick: () -> Unit, content: @Composable () -> Unit) {
     }
 }
 
+
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun ColorsList(
@@ -333,20 +341,22 @@ fun ShowDialog(
     title: String,
     content: @Composable (() -> Unit)?,
     confirmButton: @Composable () -> Unit,
-    bool: MutableState<Boolean>
+    dismissButton: @Composable () -> Unit,
+    isShowing: MutableState<Boolean>
 ) {
-    if (bool.value) {
+    if (isShowing.value) {
         AlertDialog(
-            onDismissRequest = { bool.value = false },
+            onDismissRequest = { isShowing.value = false },
             title = { Text(title, fontSize = 18.sp, color = BlueishIDK) },
             text = content,
-            confirmButton = confirmButton
+            confirmButton = confirmButton,
+            dismissButton = dismissButton
         )
     }
 }
 
 @Composable
-fun EnableInfoDialog(bool: MutableState<Boolean>) {
+fun EnableInfoDialog(isShowing: MutableState<Boolean>, onNavigateToStartUp: () -> Unit) {
     ShowDialog(
         title = "Available Colors to Search",
         content = {
@@ -358,13 +368,23 @@ fun EnableInfoDialog(bool: MutableState<Boolean>) {
         },
         confirmButton = {
             Button(
-                onClick = { bool.value = false },
+                onClick = { isShowing.value = false },
                 colors = ButtonDefaults.buttonColors(backgroundColor = BlueishIDK)
             ) {
                 Text(text = "OK", color = Color.White)
             }
 
-        }, bool = bool
+        },
+        dismissButton = {
+            MyButton(
+                onClick = {
+                    isShowing.value = false
+                    onNavigateToStartUp()
+                },
+            ) {
+                Text(text = "Intro", color = Color.White)
+            }
+        }, isShowing = isShowing
     )
 }
 
