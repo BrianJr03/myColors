@@ -1,4 +1,4 @@
-package jr.brian.myapplication.view
+package jr.brian.myapplication.view.ui.activities
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -16,6 +16,9 @@ import dagger.hilt.android.AndroidEntryPoint
 import jr.brian.logincompose.ui.theme.LoginComposeTheme
 import jr.brian.myapplication.data.model.local.FavColorsDao
 import jr.brian.myapplication.util.MyDataStore
+import jr.brian.myapplication.view.ui.composables.FavColorPage
+import jr.brian.myapplication.view.ui.composables.HomePage
+import jr.brian.myapplication.view.ui.composables.StartUpViewPager
 import javax.inject.Inject
 
 @AndroidEntryPoint

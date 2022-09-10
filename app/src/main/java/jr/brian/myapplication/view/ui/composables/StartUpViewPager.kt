@@ -1,4 +1,4 @@
-package jr.brian.myapplication.view
+package jr.brian.myapplication.view.ui.composables
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
