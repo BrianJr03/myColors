@@ -98,20 +98,20 @@ fun StartUpViewPager(onNavigateToHome: () -> Unit) {
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun SampleColorsList() {
-    val colors = mutableListOf<MyColor>().apply {
-        add(MyColor(hex = "#78B5D3", hsl = "", rgb = ""))
-        add(MyColor(hex = "#F36D91", hsl = "", rgb = ""))
-        add(MyColor(hex = "#E48762", hsl = "", rgb = ""))
-        add(MyColor(hex = "#CEF8B0", hsl = "", rgb = ""))
-        add(MyColor(hex = "#77ECFE", hsl = "", rgb = ""))
-        add(MyColor(hex = "#C2F0E0", hsl = "", rgb = ""))
-        add(MyColor(hex = "#F5BCF1", hsl = "", rgb = ""))
-        add(MyColor(hex = "#CCE1F0", hsl = "", rgb = ""))
-        add(MyColor(hex = "#FB9556", hsl = "", rgb = ""))
-        add(MyColor(hex = "#ABE175", hsl = "", rgb = ""))
-        add(MyColor(hex = "#96DFED", hsl = "", rgb = ""))
-        add(MyColor(hex = "#FEE5D7", hsl = "", rgb = ""))
-    }
+    val colors = listOf(
+        MyColor(hex = "#78B5D3", hsl = "", rgb = ""),
+        MyColor(hex = "#F36D91", hsl = "", rgb = ""),
+        MyColor(hex = "#E48762", hsl = "", rgb = ""),
+        MyColor(hex = "#CEF8B0", hsl = "", rgb = ""),
+        MyColor(hex = "#77ECFE", hsl = "", rgb = ""),
+        MyColor(hex = "#C2F0E0", hsl = "", rgb = ""),
+        MyColor(hex = "#F5BCF1", hsl = "", rgb = ""),
+        MyColor(hex = "#CCE1F0", hsl = "", rgb = ""),
+        MyColor(hex = "#FB9556", hsl = "", rgb = ""),
+        MyColor(hex = "#ABE175", hsl = "", rgb = ""),
+        MyColor(hex = "#96DFED", hsl = "", rgb = ""),
+        MyColor(hex = "#FEE5D7", hsl = "", rgb = "")
+    )
     LazyVerticalGrid(
         modifier = Modifier.fillMaxSize(),
         cells = GridCells.Adaptive(100.dp),
@@ -124,9 +124,7 @@ fun SampleColorsList() {
                     .height(150.dp)
                     .background(Color(parseColor(color.hex))),
                 contentAlignment = Alignment.Center
-            ) {
-                Text(color.hex, color = Color.Black)
-            }
+            ) { Text(color.hex, color = Color.Black) }
         }
     }
 }

@@ -105,9 +105,7 @@ fun FavColorsList(dao: FavColorsDao, list: SnapshotStateList<MyColor>) {
                     .height(150.dp)
                     .background(Color(parseColor(color.hex))),
                 contentAlignment = Alignment.Center
-            ) {
-                Text(color.hex, color = Color.Black)
-            }
+            ) { Text(color.hex, color = Color.Black) }
         }
     }
 }

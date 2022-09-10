@@ -59,7 +59,6 @@ val additionalInfo =
         "* Double-Click to Copy\n* Long-Press to Save"
     )
 
-
 @Composable
 fun HomePage(
     onNavigateToStartUp: () -> Unit,
@@ -75,7 +74,6 @@ fun HomePage(
     val flowResponse by viewModel.flowResponse.collectAsState()
     val loading by viewModel.loading.collectAsState()
 
-    val focusRequester = remember { FocusRequester() }
     val focusManager = LocalFocusManager.current
 
     val shouldShowAdditionalInfo = remember { mutableStateOf(false) }
@@ -126,24 +124,20 @@ fun HomePage(
                 ) {
                     MyTextField(
                         value = colorInput,
-                        focusRequester = focusRequester,
                         onValueChange = { if (it.length <= 15) colorInput = it },
-                        labelText = "Color",
+                        labelText = "Color | Hue",
                         kbOptions = KeyboardOptions(keyboardType = KeyboardType.Text)
                     )
 
                     MyTextField(
                         value = numOfColorsInput,
-                        focusRequester = focusRequester,
                         onValueChange = { if (it.length <= 2) numOfColorsInput = it },
                         labelText = "#",
                         kbOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
                     )
 
                     AnimatedVisibility(visible = !isShowingButtons.value) {
-                        MyButton(onClick = { searchOnClick.invoke() }) {
-                            Text(text = "Search", color = Color.White)
-                        }
+                        SearchButton { searchOnClick.invoke() }
                     }
                 }
 
@@ -156,9 +150,7 @@ fun HomePage(
                         horizontalArrangement = Arrangement.SpaceEvenly,
                     ) {
 
-                        MyButton(onClick = { searchOnClick.invoke() }) {
-                            Text(text = "Search", color = Color.White)
-                        }
+                        SearchButton { searchOnClick.invoke() }
 
                         MyButton(
                             onClick = {
@@ -167,75 +159,37 @@ fun HomePage(
                                 colorInput = "Random"
                                 numOfColorsInput = random.toString()
                                 viewModel.getColors("random", random)
-                            },
-                        ) {
-                            Text(text = "Random", color = Color.White)
-                        }
+                            }) { Text(text = "Random", color = Color.White) }
 
                         MyButton(
                             onClick = {
                                 focusManager.clearFocus()
                                 shouldShowAdditionalInfo.value = true
-                            }
-                        ) {
-                            Text(text = "Info", color = Color.White)
-                        }
+                            }) { Text(text = "Info", color = Color.White) }
 
                         MyButton(
                             onClick = {
                                 focusManager.clearFocus()
                                 onNavigateToFavorites()
-                            }) {
-                            Text(text = "Favs", color = Color.White)
-                        }
+                            }) { Text(text = "Favs", color = Color.White) }
                     }
-//                    Column(
-//                        modifier = Modifier
-//                            .fillMaxWidth()
-//                            .padding(5.dp),
-//                        verticalArrangement = Arrangement.Center,
-//                        horizontalAlignment = Alignment.CenterHorizontally
-//                    ) {
-//
-//
-//                        Row(
-//                            modifier = Modifier.fillMaxWidth(),
-//                            horizontalArrangement = Arrangement.SpaceEvenly
-//                        ) {
-//
-//                        }
-//                    }
                 }
 
                 if (loading) {
                     Spacer(modifier = Modifier.height(50.dp))
-                    CircularProgressIndicator()
+                    Row(horizontalArrangement = Arrangement.Center) {
+                        CircularProgressIndicator()
+                    }
                 }
 
                 flowResponse?.let { ColorsList(context, dao, it, lazyListState) }
-
             }
         },
         floatingActionButtonPosition = FabPosition.End,
         floatingActionButton = {
             if (lazyListState.isScrollingUp()) {
-                FloatingActionButton(
-                    onClick = { isShowingButtons.value = !isShowingButtons.value },
-                    backgroundColor = BlueishIDK,
-                ) {
-                    if (isShowingButtons.value) {
-                        Icon(
-                            Icons.Filled.KeyboardArrowUp,
-                            "Toggle Buttons",
-                            tint = Color.White
-                        )
-                    } else {
-                        Icon(
-                            Icons.Filled.KeyboardArrowDown,
-                            "Toggle Buttons",
-                            tint = Color.White
-                        )
-                    }
+                FAB(isShowingButtons = isShowingButtons) {
+                    isShowingButtons.value = !isShowingButtons.value
                 }
             }
         }
@@ -246,11 +200,11 @@ fun HomePage(
 @Composable
 fun MyTextField(
     value: String,
-    focusRequester: FocusRequester,
     onValueChange: (String) -> Unit,
     labelText: String,
     kbOptions: KeyboardOptions
 ) {
+    val focusRequester = remember { FocusRequester() }
     val gradient = Brush.horizontalGradient(
         listOf(BlueishIDK, Teal200),
         startX = 0.0f,
@@ -291,6 +245,34 @@ fun MyButton(onClick: () -> Unit, content: @Composable () -> Unit) {
     }
 }
 
+@Composable
+fun SearchButton(searchOnClick: () -> Unit) {
+    MyButton(onClick = { searchOnClick.invoke() }) {
+        Text(text = "Search", color = Color.White)
+    }
+}
+
+@Composable
+fun FAB(isShowingButtons: MutableState<Boolean>, onClick: () -> Unit) {
+    FloatingActionButton(
+        onClick = onClick,
+        backgroundColor = BlueishIDK,
+    ) {
+        if (isShowingButtons.value) {
+            Icon(
+                Icons.Filled.KeyboardArrowUp,
+                "Toggle Buttons",
+                tint = Color.White
+            )
+        } else {
+            Icon(
+                Icons.Filled.KeyboardArrowDown,
+                "Toggle Buttons",
+                tint = Color.White
+            )
+        }
+    }
+}
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -346,11 +328,11 @@ fun ShowDialog(
 ) {
     if (isShowing.value) {
         AlertDialog(
-            onDismissRequest = { isShowing.value = false },
             title = { Text(title, fontSize = 18.sp, color = BlueishIDK) },
             text = content,
             confirmButton = confirmButton,
-            dismissButton = dismissButton
+            dismissButton = dismissButton,
+            onDismissRequest = { isShowing.value = false },
         )
     }
 }

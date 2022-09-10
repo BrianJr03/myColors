@@ -16,10 +16,9 @@ class MyDataStore(private val context: Context) {
         val DID_PASS_START_UP = booleanPreferencesKey("did-pass-start-up")
     }
 
-    val getStartUpPassStatus: Flow<Boolean?> = context.dataStore.data
-        .map { preferences ->
-            preferences[DID_PASS_START_UP]
-        }
+    val getStartUpPassStatus: Flow<Boolean?> = context.dataStore.data.map { preferences ->
+        preferences[DID_PASS_START_UP]
+    }
 
     suspend fun saveStartUpPassStatus(launchStatus: Boolean) {
         context.dataStore.edit { preferences ->
