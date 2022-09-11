@@ -9,10 +9,8 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.Button
 import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.*
 import androidx.compose.runtime.snapshots.SnapshotStateList
-import androidx.compose.runtime.toMutableStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -23,6 +21,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import jr.brian.myapplication.data.model.local.FavColorsDao
 import jr.brian.myapplication.data.model.remote.MyColor
+import jr.brian.myapplication.util.MyButton
+import jr.brian.myapplication.util.ShowDialog
 import jr.brian.myapplication.util.makeToast
 import jr.brian.myapplication.util.parseColor
 import jr.brian.myapplication.util.theme.BlueishIDK
@@ -30,6 +30,13 @@ import jr.brian.myapplication.util.theme.BlueishIDK
 @Composable
 fun FavColorPage(dao: FavColorsDao) {
     val colors = remember { dao.getFavColors().toMutableStateList() }
+    val isShowingDeleteDialog = remember { mutableStateOf(false) }
+
+    DeleteAllDialog(isShowing = isShowingDeleteDialog) {
+        colors.clear()
+        dao.removeAllFavColors()
+    }
+
     Column {
         Text(
             text = "Favorite Colors",
@@ -48,13 +55,12 @@ fun FavColorPage(dao: FavColorsDao) {
                 Text(text = "OR", color = BlueishIDK)
                 Spacer(modifier = Modifier.height(15.dp))
                 Button(
-                    modifier = Modifier
-                        .fillMaxWidth(.50f), onClick = {
-                        colors.clear()
-                        dao.removeAllFavColors()
-                    }, colors = ButtonDefaults.buttonColors(
-                        backgroundColor = BlueishIDK
-                    )
+                    modifier = Modifier.fillMaxWidth(.50f),
+                    onClick = {
+                        isShowingDeleteDialog.value = true
+
+                    },
+                    colors = ButtonDefaults.buttonColors(backgroundColor = BlueishIDK)
                 ) {
                     Text(text = "Remove All", color = Color.White)
                 }
@@ -77,7 +83,7 @@ fun FavColorPage(dao: FavColorsDao) {
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun FavColorsList(dao: FavColorsDao, list: SnapshotStateList<MyColor>) {
+private fun FavColorsList(dao: FavColorsDao, list: SnapshotStateList<MyColor>) {
     val context = LocalContext.current
     val clipboardManager = LocalClipboardManager.current
     val interactionSource = remember { MutableInteractionSource() }
@@ -108,4 +114,32 @@ fun FavColorsList(dao: FavColorsDao, list: SnapshotStateList<MyColor>) {
             ) { Text(color.hex, color = Color.Black) }
         }
     }
+}
+
+@Composable
+private fun DeleteAllDialog(isShowing: MutableState<Boolean>, onConfirm: () -> Unit) {
+    ShowDialog(
+        title = "Remove All Favorites",
+        content = {
+            Text(
+                "This will remove all saved Favorites and cannot be undone.",
+                fontSize = 16.sp,
+                color = BlueishIDK
+            )
+        },
+        confirmButton = {
+            MyButton(onClick = {
+                onConfirm.invoke()
+                isShowing.value = false
+            }) {
+                Text(text = "OK", color = Color.White)
+            }
+        },
+        dismissButton = {
+            MyButton(onClick = { isShowing.value = false }) {
+                Text(text = "Cancel", color = Color.White)
+            }
+        },
+        isShowing = isShowing
+    )
 }

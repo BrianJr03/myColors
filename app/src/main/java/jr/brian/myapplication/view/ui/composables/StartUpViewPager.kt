@@ -97,7 +97,7 @@ fun StartUpViewPager(onNavigateToHome: () -> Unit) {
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun SampleColorsList() {
+private fun SampleColorsList() {
     val colors = listOf(
         MyColor(hex = "#78B5D3", hsl = "", rgb = ""),
         MyColor(hex = "#F36D91", hsl = "", rgb = ""),
