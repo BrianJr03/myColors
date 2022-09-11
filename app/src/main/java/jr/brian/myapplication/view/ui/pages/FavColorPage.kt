@@ -97,12 +97,12 @@ private fun FavColorsList(
         cells = GridCells.Adaptive(100.dp),
         state = state,
     ) {
-        items(colors.reversed().count()) { index ->
+        items(colors.count()) { index ->
             val (delay, easing) = state.calculateDelayAndEasing(index, 3)
             val animation = tween<Float>(durationMillis = 500, delayMillis = delay, easing = easing)
             val args = ScaleAndAlphaArgs(fromScale = 2f, toScale = 1f, fromAlpha = 0f, toAlpha = 1f)
             val (scale, alpha) = scaleAndAlpha(args = args, animation = animation)
-            val color = colors[index]
+            val color = colors.reversed()[index]
             Box(
                 modifier = Modifier
                     .graphicsLayer(alpha = alpha, scaleX = scale, scaleY = scale)
