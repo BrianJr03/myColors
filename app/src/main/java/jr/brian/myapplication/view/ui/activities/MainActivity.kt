@@ -9,16 +9,17 @@ import androidx.compose.material.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import dagger.hilt.android.AndroidEntryPoint
-import jr.brian.logincompose.ui.theme.LoginComposeTheme
 import jr.brian.myapplication.data.model.local.FavColorsDao
 import jr.brian.myapplication.util.MyDataStore
 import jr.brian.myapplication.view.ui.composables.FavColorPage
 import jr.brian.myapplication.view.ui.composables.HomePage
 import jr.brian.myapplication.view.ui.composables.StartUpViewPager
+import jr.brian.myapplication.view.ui.theme.ComposeTheme
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -28,13 +29,16 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        installSplashScreen()
         setContent {
-            LoginComposeTheme {
+            ComposeTheme {
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colors.background
                 ) {
-                    dao?.let { AppUI(it, MyDataStore(this)) }
+                    dao?.let {
+                        AppUI(it, MyDataStore(this))
+                    }
                 }
             }
         }
