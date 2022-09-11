@@ -8,6 +8,7 @@
     <application
         android:name=".MyApp"
         android:allowBackup="true"
+        android:screenOrientation="sensorPortrait"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
         android:icon="@mipmap/ic_launcher_foreground"
@@ -19,13 +20,16 @@
         <activity
             android:name=".view.ui.activities.MainActivity"
             android:exported="true"
-            android:theme="@style/Theme.MyColor.Splash">
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.MyColor.Splash"
+            tools:ignore="LockedOrientationActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
     </application>
 
 </manifest>
