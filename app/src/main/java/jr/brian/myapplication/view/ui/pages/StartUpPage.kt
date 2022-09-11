@@ -1,4 +1,4 @@
-package jr.brian.myapplication.view.ui.composables
+package jr.brian.myapplication.view.ui.pages
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
@@ -30,7 +30,7 @@ import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalPagerApi::class)
 @Composable
-fun StartUpViewPager(onNavigateToHome: () -> Unit) {
+fun StartUpPage(onNavigateToHome: () -> Unit) {
     val context = LocalContext.current
     val dataStore = MyDataStore(context)
     val scope = rememberCoroutineScope()

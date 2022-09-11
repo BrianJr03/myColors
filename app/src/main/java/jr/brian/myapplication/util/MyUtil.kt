@@ -4,6 +4,9 @@ import android.content.Context
 import android.widget.Toast
 import androidx.annotation.ColorInt
 import androidx.annotation.Size
+import androidx.compose.animation.core.Easing
+import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.LinearOutSlowInEasing
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -147,4 +150,24 @@ fun LazyListState.isScrollingUp(): Boolean {
             }
         }
     }.value
+}
+
+@Composable
+ fun LazyListState.calculateDelayAndEasing(index: Int, columnCount: Int): Pair<Int, Easing> {
+    val row = index / columnCount
+    val column = index % columnCount
+    val firstVisibleRow = firstVisibleItemIndex
+    val visibleRows = layoutInfo.visibleItemsInfo.count()
+    val scrollingToBottom = firstVisibleRow < row
+    val isFirstLoad = visibleRows == 0
+    val rowDelay = 200 * when {
+        isFirstLoad -> row // initial load
+        scrollingToBottom -> visibleRows + firstVisibleRow - row // scrolling to bottom
+        else -> 1 // scrolling to top
+    }
+    val scrollDirectionMultiplier = if (scrollingToBottom || isFirstLoad) 1 else -1
+    val columnDelay = column * 150 * scrollDirectionMultiplier
+    val easing = if (scrollingToBottom || isFirstLoad)
+        LinearOutSlowInEasing else FastOutSlowInEasing
+    return rowDelay + columnDelay to easing
 }

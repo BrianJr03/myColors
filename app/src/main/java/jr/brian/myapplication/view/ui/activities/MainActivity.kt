@@ -16,9 +16,9 @@ import androidx.navigation.compose.rememberNavController
 import dagger.hilt.android.AndroidEntryPoint
 import jr.brian.myapplication.data.model.local.FavColorsDao
 import jr.brian.myapplication.util.MyDataStore
-import jr.brian.myapplication.view.ui.composables.FavColorPage
-import jr.brian.myapplication.view.ui.composables.HomePage
-import jr.brian.myapplication.view.ui.composables.StartUpViewPager
+import jr.brian.myapplication.view.ui.pages.FavColorPage
+import jr.brian.myapplication.view.ui.pages.HomePage
+import jr.brian.myapplication.view.ui.pages.StartUpPage
 import jr.brian.myapplication.view.ui.theme.ComposeTheme
 import javax.inject.Inject
 
@@ -76,7 +76,7 @@ fun AppUI(dao: FavColorsDao, dataStore: MyDataStore) {
         composable(
             "start_up_page",
             content = {
-                StartUpViewPager {
+                StartUpPage {
                     navController.navigate("home_page") {
                         popUpTo(navController.graph.startDestinationId)
                         launchSingleTop = true

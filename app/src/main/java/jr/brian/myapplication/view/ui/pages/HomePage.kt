@@ -1,7 +1,8 @@
-package jr.brian.myapplication.view.ui.composables
+package jr.brian.myapplication.view.ui.pages
 
 import android.content.Context
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.LocalIndication
 import androidx.compose.foundation.background
@@ -9,13 +10,20 @@ import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.indication
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.*
+import androidx.compose.foundation.lazy.GridCells
+import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.foundation.lazy.LazyVerticalGrid
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.*
+import androidx.compose.material.CircularProgressIndicator
+import androidx.compose.material.FabPosition
+import androidx.compose.material.Scaffold
+import androidx.compose.material.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.platform.LocalContext
@@ -26,6 +34,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import jr.brian.myapplication.data.model.local.FavColorsDao
+import jr.brian.myapplication.data.model.local.ScaleAndAlphaArgs
+import jr.brian.myapplication.data.model.local.scaleAndAlpha
 import jr.brian.myapplication.data.model.remote.MyColorResponse
 import jr.brian.myapplication.util.*
 import jr.brian.myapplication.util.theme.BlueishIDK
@@ -172,7 +182,7 @@ fun HomePage(
                     }
                 }
 
-                flowResponse?.let { ColorsList(context, dao, it, lazyListState) }
+                flowResponse?.let { ColorsList(context, dao, colors = it, lazyListState) }
             }
         },
         floatingActionButtonPosition = FabPosition.End,
@@ -210,10 +220,17 @@ private fun ColorsList(
         cells = GridCells.Adaptive(100.dp),
         state = state
     ) {
-        items(colors) { color ->
+        items(colors.count()) { index ->
+            val (delay, easing) = state.calculateDelayAndEasing(index, 3)
+            val animation = tween<Float>(durationMillis = 500, delayMillis = delay, easing = easing)
+            val args = ScaleAndAlphaArgs(fromScale = 2f, toScale = 1f, fromAlpha = 0f, toAlpha = 1f)
+            val (scale, alpha) = scaleAndAlpha(args = args, animation = animation)
+            val color = colors[index]
             Box(
                 modifier = Modifier
+                    .graphicsLayer(alpha = alpha, scaleX = scale, scaleY = scale)
                     .indication(interactionSource, LocalIndication.current)
+                    .animateItemPlacement()
                     .pointerInput(Unit) {
                         detectTapGestures(
                             onDoubleTap = {

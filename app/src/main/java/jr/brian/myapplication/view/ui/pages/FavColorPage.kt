@@ -1,11 +1,10 @@
-package jr.brian.myapplication.view.ui.composables
+package jr.brian.myapplication.view.ui.pages
 
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.*
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.GridCells
-import androidx.compose.foundation.lazy.LazyVerticalGrid
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.*
 import androidx.compose.material.Button
 import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.Text
@@ -14,23 +13,24 @@ import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import jr.brian.myapplication.data.model.local.FavColorsDao
+import jr.brian.myapplication.data.model.local.ScaleAndAlphaArgs
+import jr.brian.myapplication.data.model.local.scaleAndAlpha
 import jr.brian.myapplication.data.model.remote.MyColor
-import jr.brian.myapplication.util.MyButton
-import jr.brian.myapplication.util.ShowDialog
-import jr.brian.myapplication.util.makeToast
-import jr.brian.myapplication.util.parseColor
+import jr.brian.myapplication.util.*
 import jr.brian.myapplication.util.theme.BlueishIDK
 
 @Composable
 fun FavColorPage(dao: FavColorsDao) {
     val colors = remember { dao.getFavColors().toMutableStateList() }
     val isShowingDeleteDialog = remember { mutableStateOf(false) }
+    val lazyListState = rememberLazyListState()
 
     DeleteAllDialog(isShowing = isShowingDeleteDialog) {
         colors.clear()
@@ -65,7 +65,7 @@ fun FavColorPage(dao: FavColorsDao) {
                     Text(text = "Remove All", color = Color.White)
                 }
                 Spacer(modifier = Modifier.height(15.dp))
-                FavColorsList(dao = dao, list = colors)
+                FavColorsList(dao = dao, colors = colors, state = lazyListState)
             }
 
         } else {
@@ -83,7 +83,11 @@ fun FavColorPage(dao: FavColorsDao) {
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-private fun FavColorsList(dao: FavColorsDao, list: SnapshotStateList<MyColor>) {
+private fun FavColorsList(
+    dao: FavColorsDao,
+    colors: SnapshotStateList<MyColor>,
+    state: LazyListState
+) {
     val context = LocalContext.current
     val clipboardManager = LocalClipboardManager.current
     val interactionSource = remember { MutableInteractionSource() }
@@ -91,18 +95,26 @@ private fun FavColorsList(dao: FavColorsDao, list: SnapshotStateList<MyColor>) {
     LazyVerticalGrid(
         modifier = Modifier.fillMaxSize(),
         cells = GridCells.Adaptive(100.dp),
+        state = state,
     ) {
-        items(list.reversed()) { color ->
+        items(colors.reversed().count()) { index ->
+            val (delay, easing) = state.calculateDelayAndEasing(index, 3)
+            val animation = tween<Float>(durationMillis = 500, delayMillis = delay, easing = easing)
+            val args = ScaleAndAlphaArgs(fromScale = 2f, toScale = 1f, fromAlpha = 0f, toAlpha = 1f)
+            val (scale, alpha) = scaleAndAlpha(args = args, animation = animation)
+            val color = colors[index]
             Box(
                 modifier = Modifier
+                    .graphicsLayer(alpha = alpha, scaleX = scale, scaleY = scale)
                     .indication(interactionSource, LocalIndication.current)
+                    .animateItemPlacement()
                     .combinedClickable(
                         onDoubleClick = {
                             clipboardManager.setText(AnnotatedString(color.hex))
                             makeToast(context, "Copied ${color.hex}")
                         },
                         onLongClick = {
-                            list.remove(color)
+                            colors.remove(color)
                             dao.removeFavColor(color)
 
                         }) {}
