@@ -24,6 +24,9 @@ A simple but useful app, allowing one to generate colors
 - ### Dark / Light mode
   - Based on your system settings, this app supports both dark and light mode
   - It is `recommended` to use dark mode, as it allows all lighter colors to be seen easily
+
+- ### Animations
+  - Enjoy smooth animations as you browse through colors!
   
 ### Technologies Used
  - Kotlin
