@@ -3,13 +3,12 @@
 A simple but useful app, allowing one to generate colors
 
 ![Intro](https://github.com/BrianJr03/myColors/blob/master/search_specific_small.jpg)
-![Homepage](https://github.com/BrianJr03/myColors/blob/master/home_small.jpg)
+![home_tn_2](https://user-images.githubusercontent.com/55070185/189548950-ada26e73-a52b-48ec-919f-d7e46076638c.JPEG)
 
 ![Favorites](https://github.com/BrianJr03/myColors/blob/master/favorites_small.jpg)
 ![Info](https://github.com/BrianJr03/myColors/blob/master/info_small.jpg)
 
 ## Features
-
 - ### Search Specific or Generate Random
   - Search for a specific color and generate up to `51 random shades` of that color
   - Use the `Random` button to recieve a variety of random colors
@@ -34,6 +33,3 @@ A simple but useful app, allowing one to generate colors
  - RetroFit
  - RoomDB
  - DaggerHilt
-
-## Pending Features
- - Removing individual colors from `Favorites`
