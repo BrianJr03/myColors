@@ -16,7 +16,10 @@ class MainViewModel @Inject constructor(private val repository: Repository) : Vi
 
     fun getColors(color: String, numOfColors: Int) = viewModelScope.launch {
         loading.emit(true)
-        flowResponse.emit(repository.getColors(color, numOfColors))
+        flowResponse.apply {
+            value = null
+            emit(repository.getColors(color, numOfColors))
+        }
         loading.emit(false)
     }
 }
