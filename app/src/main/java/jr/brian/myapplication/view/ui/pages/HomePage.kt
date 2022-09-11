@@ -137,7 +137,7 @@ fun HomePage(
                     )
 
                     AnimatedVisibility(visible = !isShowingButtons.value) {
-                        SearchButton { searchOnClick.invoke() }
+                        SearchButton(context) { searchOnClick.invoke() }
                     }
                 }
 
@@ -150,15 +150,20 @@ fun HomePage(
                         horizontalArrangement = Arrangement.SpaceEvenly,
                     ) {
 
-                        SearchButton { searchOnClick.invoke() }
+                        SearchButton(context) { searchOnClick.invoke() }
 
                         MyButton(
                             onClick = {
                                 focusManager.clearFocus()
-                                val random = Random.nextInt(2, 51)
-                                colorInput = "Random"
-                                numOfColorsInput = random.toString()
-                                viewModel.getColors("random", random)
+                                if (isInternetConnected(context)) {
+                                    val random = Random.nextInt(2, 51)
+                                    colorInput = "Random"
+                                    numOfColorsInput = random.toString()
+                                    viewModel.getColors("random", random)
+                                } else makeToast(
+                                    context,
+                                    "Please check your Internet connection and try again."
+                                )
                             }) { Text(text = "Random", color = Color.White) }
 
                         MyButton(
@@ -198,8 +203,15 @@ fun HomePage(
 }
 
 @Composable
-private fun SearchButton(searchOnClick: () -> Unit) {
-    MyButton(onClick = { searchOnClick.invoke() }) {
+private fun SearchButton(context: Context, searchOnClick: () -> Unit) {
+    MyButton(onClick = {
+        if (isInternetConnected(context)) {
+            searchOnClick.invoke()
+        } else makeToast(
+            context,
+            "Please check your Internet connection and try again."
+        )
+    }) {
         Text(text = "Search", color = Color.White)
     }
 }
