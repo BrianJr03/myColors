@@ -5,8 +5,8 @@ A simple but useful app, allowing one to generate colors
 ![Intro](https://github.com/BrianJr03/myColors/blob/master/search_specific_small.jpg)
 ![home_tn_2](https://user-images.githubusercontent.com/55070185/189548950-ada26e73-a52b-48ec-919f-d7e46076638c.JPEG)
 
-![Favorites](https://github.com/BrianJr03/myColors/blob/master/favorites_small.jpg)
 ![Info](https://github.com/BrianJr03/myColors/blob/master/info_small.jpg)
+![favs_tn_2](https://user-images.githubusercontent.com/55070185/189549012-175e681b-3532-4f0c-8bbc-2496e4d1ebc5.JPEG)
 
 ## Features
 - ### Search Specific or Generate Random
