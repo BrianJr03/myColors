@@ -10,8 +10,7 @@ import androidx.compose.animation.core.Easing
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.LinearOutSlowInEasing
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
@@ -20,7 +19,9 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Brush
@@ -28,6 +29,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.TileMode
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.github.skydoves.colorpicker.compose.AlphaSlider
+import com.github.skydoves.colorpicker.compose.AlphaTile
+import com.github.skydoves.colorpicker.compose.HsvColorPicker
+import com.github.skydoves.colorpicker.compose.rememberColorPickerController
 import jr.brian.myapplication.util.theme.BlueishIDK
 import jr.brian.myapplication.util.theme.Teal200
 
@@ -173,6 +178,63 @@ fun LazyListState.calculateDelayAndEasing(index: Int, columnCount: Int): Pair<In
     val easing = if (scrollingToBottom || isFirstLoad)
         LinearOutSlowInEasing else FastOutSlowInEasing
     return rowDelay + columnDelay to easing
+}
+
+@Composable
+fun ColorPicker(isShowing: MutableState<Boolean>) {
+    val controller = rememberColorPickerController()
+    if (isShowing.value) {
+        Column(
+            modifier = Modifier.padding(all = 30.dp),
+            verticalArrangement = Arrangement.Bottom
+        ) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.Center,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                AlphaTile(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(60.dp)
+                        .clip(RoundedCornerShape(6.dp)),
+                    controller = controller
+                )
+            }
+            HsvColorPicker(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(350.dp)
+                    .padding(10.dp),
+                controller = controller,
+                onColorChanged = {
+
+                }
+            )
+            AlphaSlider(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(10.dp)
+                    .height(35.dp),
+                controller = controller,
+                tileOddColor = Color.White,
+                tileEvenColor = Color.Black
+            )
+//            // on below line we are
+//            // adding a brightness slider.
+//            BrightnessSlider(
+//                // on below line we
+//                // are adding a modifier to it.
+//                modifier = Modifier
+//                    .fillMaxWidth()
+//                    .padding(10.dp)
+//                    .height(35.dp),
+//                // on below line we are
+//                // adding a controller.
+//                controller = controller,
+//            )
+        }
+    }
 }
 
 fun isInternetConnected(context: Context): Boolean {

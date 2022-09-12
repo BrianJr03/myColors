@@ -226,6 +226,23 @@ private fun ColorsList(
 ) {
     val clipboardManager = LocalClipboardManager.current
     val interactionSource = remember { MutableInteractionSource() }
+    val isShowingColorPicker = remember { mutableStateOf(false) }
+
+    ShowDialog(
+        title = "Color Picker",
+        content = { ColorPicker(isShowing = isShowingColorPicker) },
+        confirmButton = { MyButton(onClick = {
+            isShowingColorPicker.value = false
+        }) {
+            Text(text = "Done", color = Color.White)
+        } },
+        dismissButton = { MyButton(onClick = {
+            isShowingColorPicker.value = false
+        }) {
+            Text(text = "Cancel", color = Color.White)
+        } },
+        isShowing = isShowingColorPicker
+    )
 
     LazyVerticalGrid(
         modifier = Modifier.fillMaxSize(),
@@ -245,6 +262,9 @@ private fun ColorsList(
                     .animateItemPlacement()
                     .pointerInput(Unit) {
                         detectTapGestures(
+                            onTap = {
+                                isShowingColorPicker.value = true
+                            },
                             onDoubleTap = {
                                 clipboardManager.setText(AnnotatedString(color.hex))
                                 makeToast(context, "Copied ${color.hex}")
