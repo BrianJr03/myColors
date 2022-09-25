@@ -11,6 +11,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.style.TextAlign
@@ -31,6 +32,8 @@ fun SignInPage(
     val dataStore = MyDataStore(context)
     val savedEmail = dataStore.getEmail.collectAsState(initial = "")
     val savedPass = dataStore.getPassword.collectAsState(initial = "")
+
+    val focusManager = LocalFocusManager.current
 
     Column(
         modifier = Modifier
@@ -65,6 +68,7 @@ fun SignInPage(
 
         OutlinedButton(
             onClick = {
+                focusManager.clearFocus()
                 makeToast(context = context, "Coming Soon")
 //                if (email.isNotEmpty() && password.isNotEmpty()) {
 //                    if (savedEmail.value == email && savedPass.value == password) {
