@@ -11,6 +11,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.style.TextAlign
@@ -27,6 +28,7 @@ fun SignUpPage(context: Context, launchHome: () -> Unit) {
     var cPassword by remember { mutableStateOf("") }
 
     val scope = rememberCoroutineScope()
+    val focusManager = LocalFocusManager.current
 
     Column(
         modifier = Modifier
@@ -74,6 +76,7 @@ fun SignUpPage(context: Context, launchHome: () -> Unit) {
 
         OutlinedButton(
             onClick = {
+                focusManager.clearFocus()
                 signUpAcct(
                     context = context,
                     scope = scope,
