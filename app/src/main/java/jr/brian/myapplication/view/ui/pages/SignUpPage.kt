@@ -19,7 +19,6 @@ import androidx.compose.ui.unit.dp
 import jr.brian.myapplication.util.SkipButton
 import jr.brian.myapplication.util.makeToast
 import jr.brian.myapplication.util.theme.BlueishIDK
-import kotlinx.coroutines.CoroutineScope
 
 @Composable
 fun SignUpPage(context: Context, launchHome: () -> Unit) {
@@ -27,7 +26,6 @@ fun SignUpPage(context: Context, launchHome: () -> Unit) {
     var password by remember { mutableStateOf("") }
     var cPassword by remember { mutableStateOf("") }
 
-    val scope = rememberCoroutineScope()
     val focusManager = LocalFocusManager.current
 
     Column(
@@ -77,14 +75,7 @@ fun SignUpPage(context: Context, launchHome: () -> Unit) {
         OutlinedButton(
             onClick = {
                 focusManager.clearFocus()
-                signUpAcct(
-                    context = context,
-                    scope = scope,
-                    email = email,
-                    password = password,
-                    cPassword = cPassword,
-                    launchHome = launchHome
-                )
+                makeToast(context, "Coming Soon")
             },
             modifier = Modifier
                 .fillMaxWidth()
@@ -99,27 +90,4 @@ fun SignUpPage(context: Context, launchHome: () -> Unit) {
     }
 }
 
-fun signUpAcct(
-    scope: CoroutineScope,
-    context: Context,
-    email: String,
-    password: String,
-    cPassword: String,
-    launchHome: () -> Unit
-) {
-    makeToast(context = context, "Coming Soon")
-//    if (email.isEmpty() && password.isEmpty()) {
-//        makeToast(context, "Please provide all required values")
-//    } else {
-//        if (password == cPassword) {
-//            scope.launch {
-//                // TODO - SIGN UP USER WITH FIREBASE
-//                launchHome()
-//            }
-//            makeToast(context, "Account Created!")
-//        } else {
-//            makeToast(context, "Passwords must match")
-//        }
-//    }
-}
 

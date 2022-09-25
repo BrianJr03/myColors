@@ -16,7 +16,6 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import jr.brian.myapplication.util.MyDataStore
 import jr.brian.myapplication.util.SkipButton
 import jr.brian.myapplication.util.makeToast
 import jr.brian.myapplication.util.theme.BlueishIDK
@@ -28,10 +27,6 @@ fun SignInPage(
 ) {
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
-
-    val dataStore = MyDataStore(context)
-    val savedEmail = dataStore.getEmail.collectAsState(initial = "")
-    val savedPass = dataStore.getPassword.collectAsState(initial = "")
 
     val focusManager = LocalFocusManager.current
 
@@ -70,16 +65,6 @@ fun SignInPage(
             onClick = {
                 focusManager.clearFocus()
                 makeToast(context = context, "Coming Soon")
-//                if (email.isNotEmpty() && password.isNotEmpty()) {
-//                    if (savedEmail.value == email && savedPass.value == password) {
-//                        // TODO - SIGN IN USER WITH FIREBASE
-//                        launchHome()
-//                    } else {
-//                        makeToast(context, "Incorrect credentials")
-//                    }
-//                } else {
-//                    makeToast(context, "Please provide all required values")
-//                }
             },
             modifier = Modifier
                 .fillMaxWidth()
