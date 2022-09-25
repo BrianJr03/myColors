@@ -250,11 +250,11 @@ private fun ColorsList(
                         detectTapGestures(
                             onDoubleTap = {
                                 clipboardManager.setText(AnnotatedString(color.hex))
-                                makeToast(context, "Copied ${color.hex}")
+                                makeToast(context, "Copied ${color.hex} to Clipboard")
                             },
                             onLongPress = {
                                 dao.insertFavColor(color)
-                                makeToast(context, "Saved ${color.hex}")
+                                makeToast(context, "Saved ${color.hex} to Favorites")
                             },
                         )
                     }

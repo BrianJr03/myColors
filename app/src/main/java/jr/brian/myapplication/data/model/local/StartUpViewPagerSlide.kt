@@ -22,7 +22,7 @@ fun pagerData() = listOf(
     ),
     StartUpViewPagerSlide(
         title = "Create an Account",
-        subtitle = "to save your Favorites",
+        subtitle = "to sync your Favorites",
         description = MY_COLORS_WEB_DESCRIPTION
     ),
     StartUpViewPagerSlide(
