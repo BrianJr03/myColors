@@ -16,5 +16,15 @@ fun pagerData() = listOf(
         title = "Search Specific",
         subtitle = "or Generate Random",
         description = "Double-Click to Copy | Long-Press to Save"
-    )
+    ),
+    StartUpViewPagerSlide(
+        title = "Create an Account",
+        subtitle = "to save your Favorites",
+        description = "Access your account via web\n*myColorsWeb is coming soon"
+    ),
+    StartUpViewPagerSlide(
+        title = "Sign In and sync",
+        subtitle = "your Favorites",
+        description = "Access your account via web\n*myColorsWeb is coming soon"
+    ),
 )

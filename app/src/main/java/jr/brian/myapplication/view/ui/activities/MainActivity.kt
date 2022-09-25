@@ -76,12 +76,18 @@ fun AppUI(dao: FavColorsDao, dataStore: MyDataStore) {
         composable(
             "start_up_page",
             content = {
-                StartUpPage {
+                StartUpPage(onNavigateToHome = {
                     navController.navigate("home_page") {
                         popUpTo(navController.graph.startDestinationId)
                         launchSingleTop = true
                     }
-                }
+                }, signIn = {
+                    navController.navigate("home_page") {
+                        // TODO - Add Firebase login
+                        popUpTo(navController.graph.startDestinationId)
+                        launchSingleTop = true
+                    }
+                })
             })
     })
 }

@@ -35,7 +35,7 @@ import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalPagerApi::class)
 @Composable
-fun StartUpPage(onNavigateToHome: () -> Unit) {
+fun StartUpPage(onNavigateToHome: () -> Unit, signIn: () -> Unit) {
     val context = LocalContext.current
     val dataStore = MyDataStore(context)
     val scope = rememberCoroutineScope()
@@ -74,23 +74,14 @@ fun StartUpPage(onNavigateToHome: () -> Unit) {
                     color = BlueishIDK
                 )
                 Spacer(modifier = Modifier.height(10.dp))
-                SampleColorsList()
+
+                when (currentPage) {
+//                    2 -> SignUpPage(context = , navController = )
+                    3 -> SignInPage(context, signIn = signIn)
+                    else -> SampleColorsList()
+                }
             }
         }
-        Spacer(modifier = Modifier.height(20.dp))
-        Button(
-            onClick = {
-                scope.launch {
-                    dataStore.saveStartUpPassStatus(true)
-                }
-                onNavigateToHome()
-            },
-            modifier = Modifier.align(Alignment.CenterHorizontally),
-            colors = ButtonDefaults.buttonColors(backgroundColor = BlueishIDK)
-        ) {
-            Text(text = "Let's Go!", color = Color.White)
-        }
-
         HorizontalPagerIndicator(
             pagerState = pagerState,
             modifier = Modifier
@@ -99,6 +90,7 @@ fun StartUpPage(onNavigateToHome: () -> Unit) {
         )
     }
 }
+
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
