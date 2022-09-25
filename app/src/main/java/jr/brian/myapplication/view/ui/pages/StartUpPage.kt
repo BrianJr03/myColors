@@ -105,18 +105,18 @@ fun StartUpPage(onNavigateToHome: () -> Unit) {
 private fun SampleColorsList() {
     val lazyListState = rememberLazyListState()
     val colors = listOf(
-        MyColor(hex = "#78B5D3", hsl = "", rgb = ""),
-        MyColor(hex = "#F36D91", hsl = "", rgb = ""),
-        MyColor(hex = "#E48762", hsl = "", rgb = ""),
-        MyColor(hex = "#CEF8B0", hsl = "", rgb = ""),
-        MyColor(hex = "#77ECFE", hsl = "", rgb = ""),
-        MyColor(hex = "#C2F0E0", hsl = "", rgb = ""),
-        MyColor(hex = "#F5BCF1", hsl = "", rgb = ""),
-        MyColor(hex = "#CCE1F0", hsl = "", rgb = ""),
-        MyColor(hex = "#FB9556", hsl = "", rgb = ""),
-        MyColor(hex = "#ABE175", hsl = "", rgb = ""),
-        MyColor(hex = "#96DFED", hsl = "", rgb = ""),
-        MyColor(hex = "#FEE5D7", hsl = "", rgb = "")
+        MyColor(hex = "#78B5D3"),
+        MyColor(hex = "#F36D91"),
+        MyColor(hex = "#E48762"),
+        MyColor(hex = "#CEF8B0"),
+        MyColor(hex = "#77ECFE"),
+        MyColor(hex = "#C2F0E0"),
+        MyColor(hex = "#F5BCF1"),
+        MyColor(hex = "#CCE1F0"),
+        MyColor(hex = "#FB9556"),
+        MyColor(hex = "#ABE175"),
+        MyColor(hex = "#96DFED"),
+        MyColor(hex = "#FEE5D7")
     )
     LazyVerticalGrid(
         modifier = Modifier.fillMaxSize(),
