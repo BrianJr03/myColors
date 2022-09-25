@@ -76,7 +76,7 @@ fun AppUI(dao: FavColorsDao, dataStore: MyDataStore) {
         composable(
             "start_up_page",
             content = {
-                StartUpPage(onNavigateToHome = {
+                StartUpPage(launchHome = {
                     navController.navigate("home_page") {
                         popUpTo(navController.graph.startDestinationId)
                         launchSingleTop = true

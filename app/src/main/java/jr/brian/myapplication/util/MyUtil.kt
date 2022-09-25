@@ -30,6 +30,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import jr.brian.myapplication.util.theme.BlueishIDK
 import jr.brian.myapplication.util.theme.Teal200
+import kotlinx.coroutines.launch
 
 
 fun makeToast(context: Context, msg: String) =
@@ -184,5 +185,22 @@ fun isInternetConnected(context: Context): Boolean {
         activeNetwork.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) -> true
         activeNetwork.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) -> true
         else -> false
+    }
+}
+
+@Composable
+fun SkipButton(context: Context, launchHome: () -> Unit) {
+    val dataStore = MyDataStore(context)
+    val scope = rememberCoroutineScope()
+    return OutlinedButton(
+        onClick = {
+            scope.launch {
+                dataStore.saveStartUpPassStatus(true)
+            }
+            launchHome()
+        },
+        colors = ButtonDefaults.buttonColors(backgroundColor = BlueishIDK)
+    ) {
+        Text(text = "Skip", color = Color.White)
     }
 }

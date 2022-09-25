@@ -30,7 +30,7 @@ import jr.brian.myapplication.util.theme.BlueishIDK
 
 @OptIn(ExperimentalPagerApi::class)
 @Composable
-fun StartUpPage(onNavigateToHome: () -> Unit) {
+fun StartUpPage(launchHome: () -> Unit) {
     val context = LocalContext.current
 
     Column(
@@ -69,10 +69,14 @@ fun StartUpPage(onNavigateToHome: () -> Unit) {
                 Spacer(modifier = Modifier.height(10.dp))
 
                 when (currentPage) {
-                    2 -> SignUpPage(context = context, launchHome = onNavigateToHome)
-                    3 -> SignInPage(context, launchHome = onNavigateToHome)
+                    2 -> SignUpPage(context = context, launchHome = launchHome)
+                    3 -> SignInPage(context, launchHome = launchHome)
                     else -> SampleColorsList()
                 }
+
+                Spacer(modifier = Modifier.width(20.dp))
+
+
             }
         }
         HorizontalPagerIndicator(

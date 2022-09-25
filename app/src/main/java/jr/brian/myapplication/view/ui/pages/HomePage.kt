@@ -40,6 +40,7 @@ import jr.brian.myapplication.data.model.remote.MyColorResponse
 import jr.brian.myapplication.util.*
 import jr.brian.myapplication.util.theme.BlueishIDK
 import jr.brian.myapplication.viewmodel.MainViewModel
+import kotlinx.coroutines.launch
 import kotlin.random.Random
 
 val additionalInfo =
@@ -81,7 +82,9 @@ fun HomePage(
 
     val lazyListState = rememberLazyListState()
 
-    InfoDialog(isShowing = isShowingInfo, onNavigateToStartUp)
+    val dataStore = MyDataStore(context)
+
+    InfoDialog(dataStore = dataStore, isShowing = isShowingInfo, onNavigateToStartUp)
 
     val searchOnClick = {
         focusManager.clearFocus()
@@ -268,7 +271,12 @@ private fun ColorsList(
 }
 
 @Composable
-private fun InfoDialog(isShowing: MutableState<Boolean>, onNavigateToStartUp: () -> Unit) {
+private fun InfoDialog(
+    dataStore: MyDataStore,
+    isShowing: MutableState<Boolean>,
+    onNavigateToStartUp: () -> Unit
+) {
+    val scope = rememberCoroutineScope()
     ShowDialog(
         title = "Available Colors to Search",
         content = {
@@ -288,6 +296,9 @@ private fun InfoDialog(isShowing: MutableState<Boolean>, onNavigateToStartUp: ()
                 onClick = {
                     isShowing.value = false
                     // TODO - SIGN USER OUT OF FIREBASE
+                    scope.launch {
+                        dataStore.saveStartUpPassStatus(false)
+                    }
                     onNavigateToStartUp()
                 },
             ) {
