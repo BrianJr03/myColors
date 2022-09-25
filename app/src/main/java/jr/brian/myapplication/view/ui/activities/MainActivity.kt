@@ -81,13 +81,8 @@ fun AppUI(dao: FavColorsDao, dataStore: MyDataStore) {
                         popUpTo(navController.graph.startDestinationId)
                         launchSingleTop = true
                     }
-                }, signIn = {
-                    navController.navigate("home_page") {
-                        // TODO - Add Firebase login
-                        popUpTo(navController.graph.startDestinationId)
-                        launchSingleTop = true
-                    }
                 })
             })
     })
 }
+

@@ -4,7 +4,10 @@ import android.content.Context
 import android.widget.Toast
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.*
+import androidx.compose.material.Icon
+import androidx.compose.material.OutlinedButton
+import androidx.compose.material.OutlinedTextField
+import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Person
@@ -15,14 +18,12 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import androidx.navigation.NavController
-import jr.brian.myapplication.util.MyDataStore
+import jr.brian.myapplication.util.theme.BlueishIDK
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
 @Composable
-fun SignUpPage(context: Context, navController: NavController) {
+fun SignUpPage(context: Context, launchHome: () -> Unit) {
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var cPassword by remember { mutableStateOf("") }
@@ -32,20 +33,10 @@ fun SignUpPage(context: Context, navController: NavController) {
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(20.dp),
-        verticalArrangement = Arrangement.Center,
+            .padding(5.dp),
         horizontalAlignment = Alignment.CenterHorizontally
 
     ) {
-        Text(
-            text = "Sign Up",
-            textAlign = TextAlign.Left,
-            fontSize = 40.sp,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(bottom = 20.dp)
-        )
-
         // Email
         OutlinedTextField(
             value = email,
@@ -84,43 +75,40 @@ fun SignUpPage(context: Context, navController: NavController) {
         )
 
         OutlinedButton(
-            onClick = { register(scope, context, email, password, cPassword) },
+            onClick = {
+                signUpAcct(
+                    context = context,
+                    scope = scope,
+                    email = email,
+                    password = password,
+                    cPassword = cPassword,
+                    launchHome = launchHome
+                )
+            },
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(bottom = 10.dp, top = 10.dp)
         ) {
-            Text(text = "Sign Up", textAlign = TextAlign.Center)
-        }
-
-        TextButton(
-            onClick = {
-                navController.navigate("signIn_page") {
-                    popUpTo(navController.graph.startDestinationId)
-                    launchSingleTop = true
-                }
-            }
-        ) {
-            Text(
-                text = "Have an Account? Sign In",
-            )
+            Text(text = "Sign Up", textAlign = TextAlign.Center, color =  BlueishIDK)
         }
     }
 }
 
-fun register(
+fun signUpAcct(
     scope: CoroutineScope,
     context: Context,
     email: String,
     password: String,
-    cPassword: String
+    cPassword: String,
+    launchHome: () -> Unit
 ) {
-    val dataStore = MyDataStore(context)
     if (email.isEmpty() && password.isEmpty()) {
         Toast.makeText(context, "Please provide all required values", Toast.LENGTH_SHORT).show()
     } else {
         if (password == cPassword) {
             scope.launch {
-                dataStore.saveUser(email, password)
+                // TODO - SIGN UP USER WITH FIREBASE
+                launchHome()
             }
             Toast.makeText(context, "Account Created!", Toast.LENGTH_SHORT).show()
         } else {
@@ -128,3 +116,4 @@ fun register(
         }
     }
 }
+

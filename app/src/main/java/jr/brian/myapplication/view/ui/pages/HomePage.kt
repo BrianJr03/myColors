@@ -287,10 +287,11 @@ private fun InfoDialog(isShowing: MutableState<Boolean>, onNavigateToStartUp: ()
             MyButton(
                 onClick = {
                     isShowing.value = false
+                    // TODO - SIGN USER OUT OF FIREBASE
                     onNavigateToStartUp()
                 },
             ) {
-                Text(text = "Intro", color = Color.White)
+                Text(text = "Sign Out", color = Color.White)
             }
         }, isShowing = isShowing
     )

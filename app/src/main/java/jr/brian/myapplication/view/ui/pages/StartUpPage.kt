@@ -7,12 +7,9 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.GridCells
 import androidx.compose.foundation.lazy.LazyVerticalGrid
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.material.Button
-import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -27,18 +24,14 @@ import jr.brian.myapplication.data.model.local.ScaleAndAlphaArgs
 import jr.brian.myapplication.data.model.local.pagerData
 import jr.brian.myapplication.data.model.local.scaleAndAlpha
 import jr.brian.myapplication.data.model.remote.MyColor
-import jr.brian.myapplication.util.MyDataStore
 import jr.brian.myapplication.util.calculateDelayAndEasing
 import jr.brian.myapplication.util.parseColor
 import jr.brian.myapplication.util.theme.BlueishIDK
-import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalPagerApi::class)
 @Composable
-fun StartUpPage(onNavigateToHome: () -> Unit, signIn: () -> Unit) {
+fun StartUpPage(onNavigateToHome: () -> Unit) {
     val context = LocalContext.current
-    val dataStore = MyDataStore(context)
-    val scope = rememberCoroutineScope()
 
     Column(
         modifier = Modifier
@@ -76,8 +69,8 @@ fun StartUpPage(onNavigateToHome: () -> Unit, signIn: () -> Unit) {
                 Spacer(modifier = Modifier.height(10.dp))
 
                 when (currentPage) {
-//                    2 -> SignUpPage(context = , navController = )
-                    3 -> SignInPage(context, signIn = signIn)
+                    2 -> SignUpPage(context = context, launchHome = onNavigateToHome)
+                    3 -> SignInPage(context, launchHome = onNavigateToHome)
                     else -> SampleColorsList()
                 }
             }
