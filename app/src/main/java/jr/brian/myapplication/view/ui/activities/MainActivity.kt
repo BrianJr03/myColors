@@ -8,6 +8,7 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.navigation.compose.NavHost
@@ -20,6 +21,7 @@ import jr.brian.myapplication.view.ui.pages.FavColorPage
 import jr.brian.myapplication.view.ui.pages.HomePage
 import jr.brian.myapplication.view.ui.pages.StartUpPage
 import jr.brian.myapplication.view.ui.theme.ComposeTheme
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -48,6 +50,7 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun AppUI(dao: FavColorsDao, dataStore: MyDataStore) {
     val navController = rememberNavController()
+    val scope = rememberCoroutineScope()
     val didPassStartUp = dataStore.getStartUpPassStatus.collectAsState(initial = false)
     val dest = if (didPassStartUp.value == true) "home_page" else "start_up_page"
     NavHost(navController = navController, startDestination = dest, builder = {
@@ -79,6 +82,9 @@ fun AppUI(dao: FavColorsDao, dataStore: MyDataStore) {
                 StartUpPage(launchHome = {
                     navController.navigate("home_page") {
                         popUpTo(navController.graph.startDestinationId)
+                        scope.launch {
+                            dataStore.saveStartUpPassStatus(true)
+                        }
                         launchSingleTop = true
                     }
                 })

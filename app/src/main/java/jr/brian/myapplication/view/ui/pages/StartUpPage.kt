@@ -70,13 +70,11 @@ fun StartUpPage(launchHome: () -> Unit) {
 
                 when (currentPage) {
                     2 -> SignUpPage(context = context, launchHome = launchHome)
-                    3 -> SignInPage(context, launchHome = launchHome)
+                    3 -> SignInPage(context = context, launchHome = launchHome)
                     else -> SampleColorsList()
                 }
 
                 Spacer(modifier = Modifier.width(20.dp))
-
-
             }
         }
         HorizontalPagerIndicator(

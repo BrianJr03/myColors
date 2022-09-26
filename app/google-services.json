@@ -1,0 +1,90 @@
+{
+  "project_info": {
+    "project_number": "126687782011",
+    "project_id": "mycolors-bjr03",
+    "storage_bucket": "mycolors-bjr03.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:126687782011:android:735dcfb57d5638a7816ede",
+        "android_client_info": {
+          "package_name": "com.example.my_colors_web"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "126687782011-4o7214see2pgv730gk2m48m5f25c8p6t.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD5h1jp0QrQ4hJY0mNcQHxc2DAmSbXnYa0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "126687782011-4o7214see2pgv730gk2m48m5f25c8p6t.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "126687782011-nsj5ree8b6vrco8gm7l280paa5ibdbtr.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.myColorsWeb"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:126687782011:android:bdff4b11b4160af6816ede",
+        "android_client_info": {
+          "package_name": "jr.brian.myapplication"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "126687782011-3s81caakvk630qkfv6d2cda8lomu4kcs.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "jr.brian.myapplication",
+            "certificate_hash": "5e0fc2bd98255d291a6b87d4ed024171314fc750"
+          }
+        },
+        {
+          "client_id": "126687782011-4o7214see2pgv730gk2m48m5f25c8p6t.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD5h1jp0QrQ4hJY0mNcQHxc2DAmSbXnYa0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "126687782011-4o7214see2pgv730gk2m48m5f25c8p6t.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "126687782011-nsj5ree8b6vrco8gm7l280paa5ibdbtr.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.myColorsWeb"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

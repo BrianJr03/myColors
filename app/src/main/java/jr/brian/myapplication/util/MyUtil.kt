@@ -1,8 +1,6 @@
 package jr.brian.myapplication.util
 
 import android.content.Context
-import android.net.ConnectivityManager
-import android.net.NetworkCapabilities
 import android.widget.Toast
 import androidx.annotation.ColorInt
 import androidx.annotation.Size
@@ -174,18 +172,6 @@ fun LazyListState.calculateDelayAndEasing(index: Int, columnCount: Int): Pair<In
     val easing = if (scrollingToBottom || isFirstLoad)
         LinearOutSlowInEasing else FastOutSlowInEasing
     return rowDelay + columnDelay to easing
-}
-
-fun isInternetConnected(context: Context): Boolean {
-    val connectivityManager =
-        context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
-    val network = connectivityManager.activeNetwork ?: return false
-    val activeNetwork = connectivityManager.getNetworkCapabilities(network) ?: return false
-    return when {
-        activeNetwork.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) -> true
-        activeNetwork.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) -> true
-        else -> false
-    }
 }
 
 @Composable

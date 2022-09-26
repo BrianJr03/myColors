@@ -13,6 +13,7 @@ import javax.inject.Inject
 class MainViewModel @Inject constructor(private val repository: Repository) : ViewModel() {
     val flowResponse = MutableStateFlow<MyColorResponse?>(null)
     val loading = MutableStateFlow(false)
+    val isConnected = MutableStateFlow(false)
 
     fun getColors(color: String, numOfColors: Int) = viewModelScope.launch {
         loading.emit(true)
