@@ -16,8 +16,8 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import jr.brian.myapplication.data.model.remote.firebase.Auth
 import jr.brian.myapplication.util.SkipButton
+import jr.brian.myapplication.util.makeToast
 import jr.brian.myapplication.util.theme.BlueishIDK
 
 @Composable
@@ -64,9 +64,10 @@ fun SignInPage(
         OutlinedButton(
             onClick = {
                 focusManager.clearFocus()
-                Auth.signIn(context = context, email, password) {
-                    launchHome()
-                }
+                makeToast(context, "Coming Soon")
+//                Auth.signIn(context = context, email, password) {
+//                    launchHome()
+//                }
             },
             modifier = Modifier
                 .fillMaxWidth()

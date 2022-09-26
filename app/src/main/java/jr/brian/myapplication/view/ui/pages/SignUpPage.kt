@@ -16,12 +16,10 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import jr.brian.myapplication.data.model.remote.firebase.Auth
 import jr.brian.myapplication.util.SkipButton
 import jr.brian.myapplication.util.makeToast
 import jr.brian.myapplication.util.theme.BlueishIDK
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.launch
 
 @Composable
 fun SignUpPage(context: Context, launchHome: () -> Unit) {
@@ -102,17 +100,18 @@ private fun signUpAcct(
     password: String,
     cPassword: String
 ) {
-    if (email.isEmpty() && password.isEmpty()) {
-        makeToast(context, "Please provide all required values")
-    } else {
-        if (password == cPassword) {
-            scope.launch {
-                Auth.signUp(context = context, email, password)
-            }
-        } else {
-            makeToast(context, "Passwords must match")
-        }
-    }
+    makeToast(context, "Coming Soon")
+//    if (email.isEmpty() && password.isEmpty()) {
+//        makeToast(context, "Please provide all required values")
+//    } else {
+//        if (password == cPassword) {
+//            scope.launch {
+//                Auth.signUp(context = context, email, password)
+//            }
+//        } else {
+//            makeToast(context, "Passwords must match")
+//        }
+//    }
 }
 
 
