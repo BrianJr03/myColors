@@ -119,4 +119,7 @@ dependencies {
 
     // Splash Screen API
     implementation 'androidx.core:core-splashscreen:1.0.0'
+
+    // Color Picker
+    implementation "com.github.skydoves:colorpicker-compose:1.0.0"
 }
