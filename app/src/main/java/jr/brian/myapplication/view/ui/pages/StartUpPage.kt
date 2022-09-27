@@ -7,12 +7,9 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.GridCells
 import androidx.compose.foundation.lazy.LazyVerticalGrid
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.material.Button
-import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -27,18 +24,14 @@ import jr.brian.myapplication.data.model.local.ScaleAndAlphaArgs
 import jr.brian.myapplication.data.model.local.pagerData
 import jr.brian.myapplication.data.model.local.scaleAndAlpha
 import jr.brian.myapplication.data.model.remote.MyColor
-import jr.brian.myapplication.util.MyDataStore
 import jr.brian.myapplication.util.calculateDelayAndEasing
 import jr.brian.myapplication.util.parseColor
 import jr.brian.myapplication.util.theme.BlueishIDK
-import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalPagerApi::class)
 @Composable
-fun StartUpPage(onNavigateToHome: () -> Unit) {
+fun StartUpPage(launchHome: () -> Unit) {
     val context = LocalContext.current
-    val dataStore = MyDataStore(context)
-    val scope = rememberCoroutineScope()
 
     Column(
         modifier = Modifier
@@ -74,23 +67,16 @@ fun StartUpPage(onNavigateToHome: () -> Unit) {
                     color = BlueishIDK
                 )
                 Spacer(modifier = Modifier.height(10.dp))
-                SampleColorsList()
+
+                when (currentPage) {
+                    2 -> SignUpPage(context = context, launchHome = launchHome)
+                    3 -> SignInPage(context = context, launchHome = launchHome)
+                    else -> SampleColorsList()
+                }
+
+                Spacer(modifier = Modifier.width(20.dp))
             }
         }
-        Spacer(modifier = Modifier.height(20.dp))
-        Button(
-            onClick = {
-                scope.launch {
-                    dataStore.saveStartUpPassStatus(true)
-                }
-                onNavigateToHome()
-            },
-            modifier = Modifier.align(Alignment.CenterHorizontally),
-            colors = ButtonDefaults.buttonColors(backgroundColor = BlueishIDK)
-        ) {
-            Text(text = "Let's Go!", color = Color.White)
-        }
-
         HorizontalPagerIndicator(
             pagerState = pagerState,
             modifier = Modifier
@@ -100,23 +86,24 @@ fun StartUpPage(onNavigateToHome: () -> Unit) {
     }
 }
 
+
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun SampleColorsList() {
     val lazyListState = rememberLazyListState()
     val colors = listOf(
-        MyColor(hex = "#78B5D3", hsl = "", rgb = ""),
-        MyColor(hex = "#F36D91", hsl = "", rgb = ""),
-        MyColor(hex = "#E48762", hsl = "", rgb = ""),
-        MyColor(hex = "#CEF8B0", hsl = "", rgb = ""),
-        MyColor(hex = "#77ECFE", hsl = "", rgb = ""),
-        MyColor(hex = "#C2F0E0", hsl = "", rgb = ""),
-        MyColor(hex = "#F5BCF1", hsl = "", rgb = ""),
-        MyColor(hex = "#CCE1F0", hsl = "", rgb = ""),
-        MyColor(hex = "#FB9556", hsl = "", rgb = ""),
-        MyColor(hex = "#ABE175", hsl = "", rgb = ""),
-        MyColor(hex = "#96DFED", hsl = "", rgb = ""),
-        MyColor(hex = "#FEE5D7", hsl = "", rgb = "")
+        MyColor(hex = "#78B5D3"),
+        MyColor(hex = "#F36D91"),
+        MyColor(hex = "#E48762"),
+        MyColor(hex = "#CEF8B0"),
+        MyColor(hex = "#77ECFE"),
+        MyColor(hex = "#C2F0E0"),
+        MyColor(hex = "#F5BCF1"),
+        MyColor(hex = "#CCE1F0"),
+        MyColor(hex = "#FB9556"),
+        MyColor(hex = "#ABE175"),
+        MyColor(hex = "#96DFED"),
+        MyColor(hex = "#FEE5D7")
     )
     LazyVerticalGrid(
         modifier = Modifier.fillMaxSize(),

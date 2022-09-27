@@ -1,6 +1,10 @@
 package jr.brian.myapplication.view.ui.pages
 
 import android.content.Context
+import android.net.ConnectivityManager
+import android.net.Network
+import android.net.NetworkCapabilities
+import android.net.NetworkRequest
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.ExperimentalFoundationApi
@@ -37,24 +41,26 @@ import jr.brian.myapplication.data.model.local.FavColorsDao
 import jr.brian.myapplication.data.model.local.ScaleAndAlphaArgs
 import jr.brian.myapplication.data.model.local.scaleAndAlpha
 import jr.brian.myapplication.data.model.remote.MyColorResponse
+import jr.brian.myapplication.data.model.remote.firebase.Auth
 import jr.brian.myapplication.util.*
 import jr.brian.myapplication.util.theme.BlueishIDK
 import jr.brian.myapplication.viewmodel.MainViewModel
+import kotlinx.coroutines.launch
 import kotlin.random.Random
 
 val additionalInfo =
     listOf(
-        "Red",
-        "Pink",
-        "Purple",
-        "Navy",
-        "Blue",
-        "Aqua",
-        "Green",
-        "Lime",
-        "Yellow",
-        "Orange",
-        "Random",
+        "RED",
+        "PINK",
+        "PURPLE",
+        "NAVY",
+        "BLUE",
+        "AQUA",
+        "GREEN",
+        "LIME",
+        "YELLOW",
+        "ORANGE",
+        "RANDOM",
         "\nHue Color Range: 0 - 359\n",
         "* Double-Click to Copy\n* Long-Press to Save"
     )
@@ -73,6 +79,8 @@ fun HomePage(
 
     val flowResponse by viewModel.flowResponse.collectAsState()
     val loading by viewModel.loading.collectAsState()
+    val isInternetConnected by viewModel.isConnected.collectAsState()
+    val scope = rememberCoroutineScope()
 
     val focusManager = LocalFocusManager.current
 
@@ -81,7 +89,9 @@ fun HomePage(
 
     val lazyListState = rememberLazyListState()
 
-    InfoDialog(isShowing = isShowingInfo, onNavigateToStartUp)
+    val dataStore = MyDataStore(context)
+
+    InfoDialog(dataStore = dataStore, isShowing = isShowingInfo, onNavigateToStartUp)
 
     val searchOnClick = {
         focusManager.clearFocus()
@@ -96,7 +106,7 @@ fun HomePage(
             }
             if (colorInput.isNotEmpty()) {
                 if (
-                    colorInput !in additionalInfo
+                    !additionalInfo.contains(colorInput.uppercase())
                     && colorInput.toIntOrNull() !in 0..359
                 ) {
                     colorInput = "Random"
@@ -137,7 +147,10 @@ fun HomePage(
                     )
 
                     AnimatedVisibility(visible = !isShowingButtons.value) {
-                        SearchButton(context) { searchOnClick.invoke() }
+                        SearchButton(
+                            context,
+                            isInternetConnected
+                        ) { searchOnClick.invoke() }
                     }
                 }
 
@@ -150,20 +163,25 @@ fun HomePage(
                         horizontalArrangement = Arrangement.SpaceEvenly,
                     ) {
 
-                        SearchButton(context) { searchOnClick.invoke() }
+                        SearchButton(
+                            context,
+                            isInternetConnected
+                        ) { searchOnClick.invoke() }
 
                         MyButton(
                             onClick = {
                                 focusManager.clearFocus()
-                                if (isInternetConnected(context)) {
+                                if (isInternetConnected) {
                                     val random = Random.nextInt(2, 51)
                                     colorInput = "Random"
                                     numOfColorsInput = random.toString()
                                     viewModel.getColors("random", random)
-                                } else makeToast(
-                                    context,
-                                    "Please check your Internet connection and try again."
-                                )
+                                } else {
+                                    makeToast(
+                                        context,
+                                        "Please check your Internet connection and try again."
+                                    )
+                                }
                             }) { Text(text = "Random", color = Color.White) }
 
                         MyButton(
@@ -200,12 +218,50 @@ fun HomePage(
         }
 
     )
+
+    val networkRequest: NetworkRequest = NetworkRequest.Builder()
+        .addCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
+        .addTransportType(NetworkCapabilities.TRANSPORT_WIFI)
+        .addTransportType(NetworkCapabilities.TRANSPORT_CELLULAR)
+        .build()
+
+    val networkCallback = object : ConnectivityManager.NetworkCallback() {
+        override fun onAvailable(network: Network) {
+            super.onAvailable(network)
+            scope.launch {
+                viewModel.isConnected.emit(true)
+            }
+        }
+
+        override fun onCapabilitiesChanged(
+            network: Network,
+            networkCapabilities: NetworkCapabilities
+        ) {
+            super.onCapabilitiesChanged(network, networkCapabilities)
+            networkCapabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_NOT_METERED)
+        }
+
+        override fun onLost(network: Network) {
+            super.onLost(network)
+            scope.launch {
+                viewModel.isConnected.emit(false)
+            }
+        }
+    }
+
+    val connectivityManager =
+        context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+    connectivityManager.requestNetwork(networkRequest, networkCallback)
 }
 
 @Composable
-private fun SearchButton(context: Context, searchOnClick: () -> Unit) {
+private fun SearchButton(
+    context: Context,
+    isInternetConnected: Boolean,
+    searchOnClick: () -> Unit
+) {
     MyButton(onClick = {
-        if (isInternetConnected(context)) {
+        if (isInternetConnected) {
             searchOnClick.invoke()
         } else makeToast(
             context,
@@ -267,11 +323,11 @@ private fun ColorsList(
                             },
                             onDoubleTap = {
                                 clipboardManager.setText(AnnotatedString(color.hex))
-                                makeToast(context, "Copied ${color.hex}")
+                                makeToast(context, "Copied ${color.hex} to Clipboard")
                             },
                             onLongPress = {
                                 dao.insertFavColor(color)
-                                makeToast(context, "Saved ${color.hex}")
+                                makeToast(context, "Saved ${color.hex} to Favorites")
                             },
                         )
                     }
@@ -288,7 +344,12 @@ private fun ColorsList(
 }
 
 @Composable
-private fun InfoDialog(isShowing: MutableState<Boolean>, onNavigateToStartUp: () -> Unit) {
+private fun InfoDialog(
+    dataStore: MyDataStore,
+    isShowing: MutableState<Boolean>,
+    onNavigateToStartUp: () -> Unit
+) {
+    val scope = rememberCoroutineScope()
     ShowDialog(
         title = "Available Colors to Search",
         content = {
@@ -307,11 +368,17 @@ private fun InfoDialog(isShowing: MutableState<Boolean>, onNavigateToStartUp: ()
             MyButton(
                 onClick = {
                     isShowing.value = false
+                    Auth.signOut()
+                    scope.launch {
+                        dataStore.saveStartUpPassStatus(false)
+                    }
                     onNavigateToStartUp()
                 },
             ) {
-                Text(text = "Intro", color = Color.White)
+                Text(text = "Sign Out", color = Color.White)
             }
         }, isShowing = isShowing
     )
 }
+
+

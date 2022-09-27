@@ -1,8 +1,6 @@
 package jr.brian.myapplication.util
 
 import android.content.Context
-import android.net.ConnectivityManager
-import android.net.NetworkCapabilities
 import android.widget.Toast
 import androidx.annotation.ColorInt
 import androidx.annotation.Size
@@ -35,7 +33,7 @@ import com.github.skydoves.colorpicker.compose.HsvColorPicker
 import com.github.skydoves.colorpicker.compose.rememberColorPickerController
 import jr.brian.myapplication.util.theme.BlueishIDK
 import jr.brian.myapplication.util.theme.Teal200
-
+import kotlinx.coroutines.launch
 
 fun makeToast(context: Context, msg: String) =
     Toast.makeText(context, msg, Toast.LENGTH_LONG).show()
@@ -181,6 +179,20 @@ fun LazyListState.calculateDelayAndEasing(index: Int, columnCount: Int): Pair<In
 }
 
 @Composable
+fun SkipButton(context: Context, launchHome: () -> Unit) {
+    val dataStore = MyDataStore(context)
+    val scope = rememberCoroutineScope()
+    return OutlinedButton(
+        onClick = {
+            scope.launch {
+                dataStore.saveStartUpPassStatus(true)
+            }
+            launchHome()
+        },
+        colors = ButtonDefaults.buttonColors(backgroundColor = BlueishIDK)
+    ) {
+        Text(text = "Skip", color = Color.White)
+
 fun ColorPicker(isShowing: MutableState<Boolean>) {
     val controller = rememberColorPickerController()
     if (isShowing.value) {
@@ -234,17 +246,5 @@ fun ColorPicker(isShowing: MutableState<Boolean>) {
 //                controller = controller,
 //            )
         }
-    }
-}
-
-fun isInternetConnected(context: Context): Boolean {
-    val connectivityManager =
-        context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
-    val network = connectivityManager.activeNetwork ?: return false
-    val activeNetwork = connectivityManager.getNetworkCapabilities(network) ?: return false
-    return when {
-        activeNetwork.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) -> true
-        activeNetwork.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) -> true
-        else -> false
     }
 }

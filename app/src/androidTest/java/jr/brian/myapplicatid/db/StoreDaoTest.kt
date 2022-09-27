@@ -26,9 +26,9 @@ class FavColorsDaoTest {
     private lateinit var appDB: AppDatabase
     private lateinit var dao: FavColorsDao
 
-    private val color1 = MyColor(hex = "#E48762", hsl = "", rgb = "")
-    private val color2 = MyColor(hex = "#CEF8B0", hsl = "", rgb = "")
-    private val color3 = MyColor(hex = "#77ECFE", hsl = "", rgb = "")
+    private val color1 = MyColor(hex = "#E48762")
+    private val color2 = MyColor(hex = "#CEF8B0")
+    private val color3 = MyColor(hex = "#77ECFE")
 
     @get:Rule
     val rule = InstantTaskExecutorRule()
