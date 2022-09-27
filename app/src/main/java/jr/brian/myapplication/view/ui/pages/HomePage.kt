@@ -93,7 +93,6 @@ fun HomePage(
 
     InfoDialog(dataStore = dataStore, isShowing = isShowingInfo, onNavigateToStartUp)
 
-
     val searchOnClick = {
         focusManager.clearFocus()
         if (numOfColorsInput.toIntOrNull() != null) {

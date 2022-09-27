@@ -30,7 +30,6 @@ import jr.brian.myapplication.util.theme.BlueishIDK
 import jr.brian.myapplication.util.theme.Teal200
 import kotlinx.coroutines.launch
 
-
 fun makeToast(context: Context, msg: String) =
     Toast.makeText(context, msg, Toast.LENGTH_LONG).show()
 
