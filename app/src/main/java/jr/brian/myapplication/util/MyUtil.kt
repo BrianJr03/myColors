@@ -8,17 +8,15 @@ import androidx.compose.animation.core.Easing
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.LinearOutSlowInEasing
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.KeyboardArrowDown
-import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Brush
@@ -26,25 +24,16 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.TileMode
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.github.skydoves.colorpicker.compose.AlphaTile
+import com.github.skydoves.colorpicker.compose.BrightnessSlider
+import com.github.skydoves.colorpicker.compose.ColorPickerController
+import com.github.skydoves.colorpicker.compose.HsvColorPicker
 import jr.brian.myapplication.util.theme.BlueishIDK
 import jr.brian.myapplication.util.theme.Teal200
 import kotlinx.coroutines.launch
 
 fun makeToast(context: Context, msg: String) =
     Toast.makeText(context, msg, Toast.LENGTH_LONG).show()
-
-@ColorInt
-fun parseColor(@Size(min = 1) colorString: String): Int {
-    val error = "Unknown Color"
-    if (colorString[0] == '#') {
-        var color = colorString.substring(1).toLong(16)
-        if (colorString.length == 7) {
-            color = color or -0x1000000
-        } else require(colorString.length == 9) { error }
-        return color.toInt()
-    }
-    throw IllegalArgumentException(error)
-}
 
 @Composable
 fun ShowDialog(
@@ -114,25 +103,14 @@ fun MyTextField(
 }
 
 @Composable
-fun FAB(isShowingButtons: MutableState<Boolean>, onClick: () -> Unit) {
+fun FAB(
+    onClick: () -> Unit,
+    content: @Composable () -> Unit
+) {
     FloatingActionButton(
         onClick = onClick,
         backgroundColor = BlueishIDK,
-    ) {
-        if (isShowingButtons.value) {
-            Icon(
-                Icons.Filled.KeyboardArrowUp,
-                "Toggle Buttons",
-                tint = Color.White
-            )
-        } else {
-            Icon(
-                Icons.Filled.KeyboardArrowDown,
-                "Toggle Buttons",
-                tint = Color.White
-            )
-        }
-    }
+    ) { content() }
 }
 
 @Composable
@@ -188,4 +166,65 @@ fun SkipButton(context: Context, launchHome: () -> Unit) {
     ) {
         Text(text = "Skip", color = Color.White)
     }
+}
+
+@ColorInt
+fun parseColor(@Size(min = 1) colorString: String): Int {
+    val error = "Unknown Color"
+    if (colorString[0] == '#') {
+        var color = colorString.substring(1).toLong(16)
+        if (colorString.length == 7) {
+            color = color or -0x1000000
+        } else require(colorString.length == 9) { error }
+        return color.toInt()
+    }
+    throw IllegalArgumentException(error)
+}
+
+@Composable
+fun ColorPicker(isShowing: MutableState<Boolean>, controller: ColorPickerController) {
+    if (isShowing.value) {
+        Column(
+            modifier = Modifier.padding(all = 30.dp),
+            verticalArrangement = Arrangement.Bottom
+        ) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.Center,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                AlphaTile(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(60.dp)
+                        .clip(RoundedCornerShape(6.dp)),
+                    controller = controller
+                )
+            }
+            HsvColorPicker(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(350.dp)
+                    .padding(10.dp),
+                controller = controller,
+                onColorChanged = {
+
+                }
+            )
+            BrightnessSlider(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(10.dp)
+                    .height(35.dp),
+                controller = controller,
+            )
+        }
+    }
+}
+
+fun Color.toHexCode(): String {
+    val red = this.red * 255
+    val green = this.green * 255
+    val blue = this.blue * 255
+    return String.format("#%02x%02x%02x", red.toInt(), green.toInt(), blue.toInt())
 }

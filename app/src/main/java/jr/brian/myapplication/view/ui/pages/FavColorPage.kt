@@ -8,9 +8,9 @@ import androidx.compose.foundation.lazy.GridCells
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.LazyVerticalGrid
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.material.Button
-import androidx.compose.material.ButtonDefaults
-import androidx.compose.material.Text
+import androidx.compose.material.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.runtime.*
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
@@ -22,6 +22,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.github.skydoves.colorpicker.compose.rememberColorPickerController
 import jr.brian.myapplication.data.model.local.FavColorsDao
 import jr.brian.myapplication.data.model.local.ScaleAndAlphaArgs
 import jr.brian.myapplication.data.model.local.scaleAndAlpha
@@ -35,51 +36,82 @@ fun FavColorPage(dao: FavColorsDao) {
     val isShowingDeleteDialog = remember { mutableStateOf(false) }
     val lazyListState = rememberLazyListState()
 
-    DeleteAllDialog(isShowing = isShowingDeleteDialog) {
-        colors.clear()
-        dao.removeAllFavColors()
-    }
+    val controller = rememberColorPickerController()
+    val isShowingColorPicker = remember { mutableStateOf(false) }
 
-    Column {
-        Text(
-            text = "Favorite Colors",
-            fontSize = 30.sp,
-            color = BlueishIDK,
-            modifier = Modifier.padding(8.dp)
-        )
-        Spacer(modifier = Modifier.height(15.dp))
-        if (colors.isNotEmpty()) {
-            Column(
-                verticalArrangement = Arrangement.Center,
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                Text(text = "Long-Press to Delete", color = BlueishIDK)
-                Spacer(modifier = Modifier.height(15.dp))
-                Text(text = "OR", color = BlueishIDK)
-                Spacer(modifier = Modifier.height(15.dp))
-                Button(
-                    modifier = Modifier.fillMaxWidth(.50f),
-                    onClick = {
-                        isShowingDeleteDialog.value = true
+    Scaffold(floatingActionButton = {
+        FAB(onClick = { isShowingColorPicker.value = true }) {
+            Icon(Icons.Default.Add, "Add Color")
+        }
+    }) {
+        DeleteAllDialog(isShowing = isShowingDeleteDialog) {
+            colors.clear()
+            dao.removeAllFavColors()
+        }
 
-                    },
-                    colors = ButtonDefaults.buttonColors(backgroundColor = BlueishIDK)
+        Column {
+            Text(
+                text = "Favorite Colors",
+                fontSize = 30.sp,
+                color = BlueishIDK,
+                modifier = Modifier.padding(8.dp)
+            )
+            Spacer(modifier = Modifier.height(15.dp))
+            if (colors.isNotEmpty()) {
+                Column(
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    Text(text = "Remove All", color = Color.White)
+                    Text(text = "Long-Press to Delete", color = BlueishIDK)
+                    Spacer(modifier = Modifier.height(15.dp))
+                    Text(text = "OR", color = BlueishIDK)
+                    Spacer(modifier = Modifier.height(15.dp))
+                    Button(
+                        modifier = Modifier.fillMaxWidth(.50f),
+                        onClick = {
+                            isShowingDeleteDialog.value = true
+
+                        },
+                        colors = ButtonDefaults.buttonColors(backgroundColor = BlueishIDK)
+                    ) {
+                        Text(text = "Remove All", color = Color.White)
+                    }
+                    Spacer(modifier = Modifier.height(15.dp))
+                    FavColorsList(dao = dao, colors = colors, state = lazyListState)
                 }
-                Spacer(modifier = Modifier.height(15.dp))
-                FavColorsList(dao = dao, colors = colors, state = lazyListState)
+            } else {
+                Row(horizontalArrangement = Arrangement.Center) {
+                    Text(
+                        text = "No Favorites Saved",
+                        color = BlueishIDK,
+                        fontSize = 20.sp,
+                        modifier = Modifier.padding(8.dp)
+                    )
+                }
             }
 
-        } else {
-            Row(horizontalArrangement = Arrangement.Center) {
-                Text(
-                    text = "No Favorites Saved",
-                    color = BlueishIDK,
-                    fontSize = 20.sp,
-                    modifier = Modifier.padding(8.dp)
-                )
-            }
+            ShowDialog(
+                title = "Color Picker",
+                content = { ColorPicker(isShowing = isShowingColorPicker, controller) },
+                confirmButton = {
+                    MyButton(onClick = {
+                        isShowingColorPicker.value = false
+                        val color = MyColor(controller.selectedColor.value.toHexCode())
+                        colors.add(color)
+                        dao.insertFavColor(color)
+                    }) {
+                        Text(text = "Save", color = Color.White)
+                    }
+                },
+                dismissButton = {
+                    MyButton(onClick = {
+                        isShowingColorPicker.value = false
+                    }) {
+                        Text(text = "Cancel", color = Color.White)
+                    }
+                },
+                isShowing = isShowingColorPicker
+            )
         }
     }
 }
@@ -119,7 +151,6 @@ private fun FavColorsList(
                         onLongClick = {
                             colors.remove(color)
                             dao.removeFavColor(color)
-
                         }) {}
                     .padding(8.dp)
                     .width(150.dp)

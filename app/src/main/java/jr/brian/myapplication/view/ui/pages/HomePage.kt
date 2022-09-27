@@ -19,10 +19,10 @@ import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.LazyVerticalGrid
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.CircularProgressIndicator
-import androidx.compose.material.FabPosition
-import androidx.compose.material.Scaffold
-import androidx.compose.material.Text
+import androidx.compose.material.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.KeyboardArrowDown
+import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -211,12 +211,18 @@ fun HomePage(
         floatingActionButtonPosition = FabPosition.End,
         floatingActionButton = {
             if (lazyListState.isScrollingUp()) {
-                FAB(isShowingButtons = isShowingButtons) {
-                    isShowingButtons.value = !isShowingButtons.value
+                FAB(onClick = { isShowingButtons.value = !isShowingButtons.value }) {
+                    if (isShowingButtons.value) {
+                        Icon(Icons.Default.KeyboardArrowUp, contentDescription = "Hide Menu")
+                    } else {
+                        Icon(
+                            Icons.Default.KeyboardArrowDown,
+                            contentDescription = "Reveal Menu"
+                        )
+                    }
                 }
             }
         }
-
     )
 
     val networkRequest: NetworkRequest = NetworkRequest.Builder()
@@ -360,5 +366,3 @@ private fun InfoDialog(
         }, isShowing = isShowing
     )
 }
-
-
