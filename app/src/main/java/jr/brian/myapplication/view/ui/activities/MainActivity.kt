@@ -91,4 +91,3 @@ fun AppUI(dao: FavColorsDao, dataStore: MyDataStore) {
             })
     })
 }
-

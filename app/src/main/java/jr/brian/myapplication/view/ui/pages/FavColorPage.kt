@@ -37,11 +37,12 @@ fun FavColorPage(dao: FavColorsDao) {
     val lazyListState = rememberLazyListState()
 
     val controller = rememberColorPickerController()
+    val selectedColor = controller.selectedColor.value
     val isShowingColorPicker = remember { mutableStateOf(false) }
 
     Scaffold(floatingActionButton = {
         FAB(onClick = { isShowingColorPicker.value = true }) {
-            Icon(Icons.Default.Add, "Add Color")
+            Icon(Icons.Default.Add, "Add Color", tint = Color.White)
         }
     }) {
         DeleteAllDialog(isShowing = isShowingDeleteDialog) {
@@ -91,25 +92,20 @@ fun FavColorPage(dao: FavColorsDao) {
             }
 
             ShowDialog(
-                title = "Color Picker",
+                title = "Add Color",
+                titleColor = selectedColor,
                 content = { ColorPicker(isShowing = isShowingColorPicker, controller) },
                 confirmButton = {
                     MyButton(onClick = {
                         isShowingColorPicker.value = false
-                        val color = MyColor(controller.selectedColor.value.toHexCode())
+                        val color = MyColor(selectedColor.toHexCode())
                         colors.add(color)
                         dao.insertFavColor(color)
                     }) {
-                        Text(text = "Save", color = Color.White)
+                        Text(text = "Save", color = selectedColor)
                     }
                 },
-                dismissButton = {
-                    MyButton(onClick = {
-                        isShowingColorPicker.value = false
-                    }) {
-                        Text(text = "Cancel", color = Color.White)
-                    }
-                },
+                dismissButton = {},
                 isShowing = isShowingColorPicker
             )
         }

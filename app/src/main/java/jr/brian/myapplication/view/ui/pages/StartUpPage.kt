@@ -45,30 +45,30 @@ fun StartUpPage(launchHome: () -> Unit) {
             count = items.size,
             state = pagerState,
             modifier = Modifier.weight(1f)
-        ) { currentPage ->
+        ) { currentPageIndex ->
             Column(
                 modifier = Modifier.fillMaxSize()
             ) {
                 Text(
-                    text = items[currentPage].title,
+                    text = items[currentPageIndex].title,
                     style = MaterialTheme.typography.h4,
                     color = BlueishIDK
                 )
                 Spacer(modifier = Modifier.height(10.dp))
                 Text(
-                    text = items[currentPage].subtitle,
+                    text = items[currentPageIndex].subtitle,
                     style = MaterialTheme.typography.h4,
                     color = BlueishIDK
                 )
                 Spacer(modifier = Modifier.height(10.dp))
                 Text(
-                    text = items[currentPage].description,
+                    text = items[currentPageIndex].description,
                     style = MaterialTheme.typography.body1,
                     color = BlueishIDK
                 )
                 Spacer(modifier = Modifier.height(10.dp))
 
-                when (currentPage) {
+                when (currentPageIndex) {
                     2 -> SignUpPage(context = context, launchHome = launchHome)
                     3 -> SignInPage(context = context, launchHome = launchHome)
                     else -> SampleColorsList()

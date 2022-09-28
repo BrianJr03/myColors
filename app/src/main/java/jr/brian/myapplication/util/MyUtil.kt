@@ -38,6 +38,7 @@ fun makeToast(context: Context, msg: String) =
 @Composable
 fun ShowDialog(
     title: String,
+    titleColor: Color = BlueishIDK,
     content: @Composable (() -> Unit)?,
     confirmButton: @Composable () -> Unit,
     dismissButton: @Composable () -> Unit,
@@ -45,7 +46,7 @@ fun ShowDialog(
 ) {
     if (isShowing.value) {
         AlertDialog(
-            title = { Text(title, fontSize = 18.sp, color = BlueishIDK) },
+            title = { Text(title, fontSize = 18.sp, color = titleColor) },
             text = content,
             confirmButton = confirmButton,
             dismissButton = dismissButton,
@@ -222,9 +223,10 @@ fun ColorPicker(isShowing: MutableState<Boolean>, controller: ColorPickerControl
     }
 }
 
-fun Color.toHexCode(): String {
-    val red = this.red * 255
-    val green = this.green * 255
-    val blue = this.blue * 255
-    return String.format("#%02x%02x%02x", red.toInt(), green.toInt(), blue.toInt())
-}
+fun Color.toHexCode(): String =
+    String.format(
+        "#%02X%02X%02X",
+        (red * 255).toInt(),
+        (green * 255).toInt(),
+        (blue * 255).toInt()
+    )

@@ -213,11 +213,16 @@ fun HomePage(
             if (lazyListState.isScrollingUp()) {
                 FAB(onClick = { isShowingButtons.value = !isShowingButtons.value }) {
                     if (isShowingButtons.value) {
-                        Icon(Icons.Default.KeyboardArrowUp, contentDescription = "Hide Menu")
+                        Icon(
+                            Icons.Default.KeyboardArrowUp,
+                            contentDescription = "Hide Menu",
+                            tint = Color.White
+                        )
                     } else {
                         Icon(
                             Icons.Default.KeyboardArrowDown,
-                            contentDescription = "Reveal Menu"
+                            contentDescription = "Reveal Menu",
+                            tint = Color.White
                         )
                     }
                 }
